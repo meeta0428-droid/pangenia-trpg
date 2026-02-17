@@ -312,7 +312,18 @@
             <h2>共有用QRコード</h2>
             <div id="qrcode" style="margin: 20px auto; display: flex; justify-content: center;"></div>
             <p style="font-size: 0.9rem; color: #555;">このQRコードを別の端末で読み取ると、同じチームプールを操作できます。</p>
-            <p id="room-id-display" style="font-size: 0.8rem; color: #888;"></p>
+
+            <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                <p style="font-size: 0.9rem; margin-bottom: 5px;">またはURLをコピーして共有:</p>
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <input type="text" id="share-url-input" readonly
+                        style="width: 70%; padding: 5px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
+                    <button id="btn-copy-url"
+                        style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Copy</button>
+                </div>
+            </div>
+
+            <p id="room-id-display" style="font-size: 0.8rem; color: #888; margin-top: 10px;"></p>
         </div>
     </div>
     <!-- Firebase SDKs -->
