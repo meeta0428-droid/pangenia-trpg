@@ -370,9 +370,191 @@ function initEquipmentListeners() {
     });
 }
 
+// --- Save/Load System ---
+
+function initSaveSystem() {
+    const selector = document.getElementById('save-slot-select');
+    const statusDiv = document.getElementById('slot-status');
+
+    // Generate 50 slots
+    for (let i = 1; i <= 50; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `Slot ${i}`;
+        selector.appendChild(opt);
+    }
+
+    // Load initial status
+    updateSlotStatus();
+
+    selector.addEventListener('change', updateSlotStatus);
+
+    document.getElementById('btn-save').addEventListener('click', () => {
+        try {
+            const slot = selector.value;
+            const data = collectData();
+            localStorage.setItem(`pangaea_char_${slot}`, JSON.stringify(data));
+            updateSlotStatus();
+            alert(`Slot ${slot} に保存しました。`);
+        } catch (e) {
+            alert(`保存に失敗しました: ${e.message}`);
+            console.error(e);
+        }
+    });
+
+    document.getElementById('btn-load').addEventListener('click', () => {
+        try {
+            const slot = selector.value;
+            const json = localStorage.getItem(`pangaea_char_${slot}`);
+            if (json) {
+                if (confirm(`Slot ${slot} を読み込みますか？現在の入力内容は失われます。`)) {
+                    applyData(JSON.parse(json));
+                    alert(`Slot ${slot} を読み込みました。`);
+                }
+            } else {
+                alert('保存データがありません。');
+            }
+        } catch (e) {
+            alert(`読み込みに失敗しました: ${e.message}`);
+            console.error(e);
+        }
+    });
+
+    document.getElementById('btn-delete').addEventListener('click', () => {
+        const slot = selector.value;
+        if (localStorage.getItem(`pangaea_char_${slot}`)) {
+            if (confirm(`Slot ${slot} のデータを削除しますか？`)) {
+                localStorage.removeItem(`pangaea_char_${slot}`);
+                updateSlotStatus();
+                alert(`Slot ${slot} を削除しました。`);
+            }
+        }
+    });
+}
+
+function updateSlotStatus() {
+    const selector = document.getElementById('save-slot-select');
+    const statusDiv = document.getElementById('slot-status');
+    const slot = selector.value;
+    const json = localStorage.getItem(`pangaea_char_${slot}`);
+
+    if (json) {
+        const data = JSON.parse(json);
+        statusDiv.textContent = `データあり: ${data.name || '名称未設定'} (${data.race || '種族未設定'})`;
+        statusDiv.style.color = 'var(--secondary-accent)';
+    } else {
+        statusDiv.textContent = 'データなし (Empty)';
+        statusDiv.style.color = '#888';
+    }
+}
+
+function collectData() {
+    return {
+        name: document.getElementById('char-name').value,
+        race: document.getElementById('char-race').value,
+        raceChoices: raceChoices,
+        job1: document.getElementById('job-1').value,
+        job2: document.getElementById('job-2').value,
+        growths: currentGrowths,
+        growthHistory: growthHistory,
+        equipment: Array.from(document.querySelectorAll('.equipment-section .equip-row')).map(row => ({
+            name: row.querySelector('.equip-name').value,
+            cost: row.querySelector('.equip-cost').value
+        })),
+        items: Array.from(document.querySelectorAll('.items-section .item-row')).map(row => ({
+            name: row.querySelector('.item-name').value,
+            effect: row.querySelector('.item-effect').value,
+            cost: row.querySelector('.item-cost').value
+        })),
+        arts: Array.from(document.querySelectorAll('.arts-input')).map(input => input.value),
+        background: {
+            past: document.querySelectorAll('.background-section textarea')[0].value,
+            reason: document.querySelectorAll('.background-section textarea')[1].value,
+            social: document.querySelectorAll('.background-section textarea')[2].value,
+            future: document.querySelectorAll('.background-section textarea')[3].value
+        }
+    };
+}
+
+function applyData(data) {
+    // 1. Basic Info
+    document.getElementById('char-name').value = data.name || '';
+
+    // 2. Race
+    const raceSelect = document.getElementById('char-race');
+    raceSelect.value = data.race || '';
+    // Trigger change to update UI and "Any" selectors
+    raceSelect.dispatchEvent(new Event('change'));
+
+    // Restore Race Choices (Any stats)
+    if (data.raceChoices && Array.from(document.querySelectorAll('#race-choice-container select')).length > 0) {
+        raceChoices = data.raceChoices;
+        const choiceSelects = document.querySelectorAll('#race-choice-container select');
+        choiceSelects.forEach((sel, idx) => {
+            if (raceChoices[idx]) sel.value = raceChoices[idx];
+        });
+    }
+
+    // 3. Stats & History
+    // Reset to base first (handled by race change), then apply stats
+    // But simply setting values isn't enough because of history tracking.
+    // To restore correctly, we need to set the internal state.
+    currentGrowths = data.growths || { strength: 0, skill: 0, intellect: 0, speed: 0, charm: 0 };
+    growthHistory = data.growthHistory || [];
+
+    // 4. Jobs
+    document.getElementById('job-1').value = data.job1 || '';
+    document.getElementById('job-1').dispatchEvent(new Event('change'));
+    document.getElementById('job-2').value = data.job2 || '';
+    document.getElementById('job-2').dispatchEvent(new Event('change'));
+
+    // 5. Equipment
+    if (data.equipment) {
+        const rows = document.querySelectorAll('.equipment-section .equip-row');
+        data.equipment.forEach((eq, idx) => {
+            if (rows[idx]) {
+                rows[idx].querySelector('.equip-name').value = eq.name;
+                rows[idx].querySelector('.equip-cost').value = eq.cost;
+            }
+        });
+    }
+
+    // 6. Items
+    if (data.items) {
+        const rows = document.querySelectorAll('.items-section .item-row');
+        data.items.forEach((it, idx) => {
+            if (rows[idx]) {
+                rows[idx].querySelector('.item-name').value = it.name;
+                rows[idx].querySelector('.item-effect').value = it.effect;
+                rows[idx].querySelector('.item-cost').value = it.cost;
+            }
+        });
+    }
+
+    // 7. Arts
+    if (data.arts) {
+        const inputs = document.querySelectorAll('.arts-input');
+        data.arts.forEach((val, idx) => {
+            if (inputs[idx]) inputs[idx].value = val;
+        });
+    }
+
+    // 8. Background
+    if (data.background) {
+        const textareas = document.querySelectorAll('.background-section textarea');
+        textareas[0].value = data.background.past || '';
+        textareas[1].value = data.background.reason || '';
+        textareas[2].value = data.background.social || '';
+        textareas[3].value = data.background.future || '';
+    }
+
+    updateUI();
+}
+
 // Initialize
 initRaceDropdown();
 initJobDropdowns();
 initEquipmentListeners();
+initSaveSystem();
 updateUI();
 
