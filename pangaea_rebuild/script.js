@@ -521,6 +521,9 @@ function updateSlotStatus() {
     const slot = selector.value;
     const json = localStorage.getItem(`pangaea_char_${slot}`);
 
+    // statusDivがHTMLに存在しない場合はスキップ
+    if (!statusDiv) return;
+
     if (json) {
         const data = JSON.parse(json);
         statusDiv.textContent = `データあり: ${data.name || '名称未設定'} (${data.race || '種族未設定'})`;
