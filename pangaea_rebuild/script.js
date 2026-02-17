@@ -552,6 +552,7 @@ function collectData() {
         items: Array.from(document.querySelectorAll('.items-section .item-row')).map(row => ({
             name: row.querySelector('.item-name').value,
             effect: row.querySelector('.item-effect').value,
+            count: row.querySelector('.item-count') ? row.querySelector('.item-count').value : 0,
             cost: row.querySelector('.item-cost').value
         })),
         arts: Array.from(document.querySelectorAll('.arts-input')).map(input => input.value),
@@ -625,6 +626,7 @@ function applyData(data) {
             if (rows[idx]) {
                 rows[idx].querySelector('.item-name').value = it.name;
                 rows[idx].querySelector('.item-effect').value = it.effect;
+                if (rows[idx].querySelector('.item-count')) rows[idx].querySelector('.item-count').value = it.count || 0;
                 rows[idx].querySelector('.item-cost').value = it.cost;
             }
         });

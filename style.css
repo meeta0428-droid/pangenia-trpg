@@ -291,6 +291,10 @@ header p {
     width: 80px;
 }
 
+.header-count {
+    width: 60px;
+}
+
 .item-row {
     display: flex;
     gap: 15px;
@@ -311,6 +315,10 @@ header p {
 
 .item-row .item-cost {
     width: 80px;
+}
+
+.item-row .item-count {
+    width: 60px;
 }
 
 .arts-section {
