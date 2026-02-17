@@ -68,6 +68,7 @@
                         onclick="if(window.doDelete) window.doDelete(); else alert('Script not loaded');">削除
                         (Delete)</button>
                 </div>
+                <div id="slot-status" style="margin-top: 8px; font-size: 0.9rem; color: #888;">データなし (Empty)</div>
             </div>
             <!-- Dice Roller Modal -->
             <div id="dice-modal" class="modal"
@@ -419,7 +420,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260218-fix5"></script>
+        <script src="script.js?v=20260218-fix6"></script>
 </body>
 
 </html>
