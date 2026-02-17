@@ -1023,8 +1023,8 @@ function initDiceRoller() {
 }
 
 // Global Initialization Logic
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded. Starting initialization...");
+function runAllInit() {
+    console.log("Starting initialization...");
 
     function safeInit(fn, name) {
         try {
@@ -1043,4 +1043,13 @@ document.addEventListener('DOMContentLoaded', () => {
     safeInit(initDiceRoller, "DiceRoller");
 
     console.log("All initialization complete.");
-});
+}
+
+// DOMContentLoaded may have already fired if script is at body end
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runAllInit);
+} else {
+    // DOM is already ready, run immediately
+    runAllInit();
+}
+
