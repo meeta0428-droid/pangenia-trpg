@@ -1,0 +1,326 @@
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --background-bg: #f8fafc;
+    --text-color: #1e293b;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-bg);
+    color: var(--text-color);
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.main-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+header p {
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #475569;
+}
+
+.input-group input {
+    padding: 0.75rem;
+    font-size: 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    width: 100px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.stats-panel.hidden {
+    display: none;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label.fumble {
+    color: #ef4444;
+    /* Red color for fumble */
+    font-weight: bold;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.history-panel.hidden {
+    display: none;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.history-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+    color: #475569;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-header {
+    font-weight: 600;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.dice-arena {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.die {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #334155;
+    position: relative;
+}
+
+/* Dots layout using CSS Grid for more realistic dice */
+.die-face {
+    display: grid;
+    grid-template-areas:
+        "a . c"
+        "e g f"
+        "h . i";
+    flex: 1;
+    padding: 8px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 4px;
+}
+
+.dot {
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: #334155;
+    border-radius: 50%;
+    align-self: center;
+    justify-self: center;
+}
+
+.die-face[data-value="1"] {
+    grid-template-areas: ". . ." ". g ." ". . .";
+}
+
+.die-face[data-value="2"] {
+    grid-template-areas: "a . ." ". . ." ". . i";
+}
+
+.die-face[data-value="3"] {
+    grid-template-areas: "a . ." ". g ." ". . i";
+}
+
+.die-face[data-value="4"] {
+    grid-template-areas: "a . c" ". . ." "h . i";
+}
+
+.die-face[data-value="5"] {
+    grid-template-areas: "a . c" ". g ." "h . i";
+}
+
+.die-face[data-value="6"] {
+    grid-template-areas: "a . c" "e . f" "h . i";
+}
+
+.dot-a {
+    grid-area: a;
+}
+
+/* Top Left */
+.dot-c {
+    grid-area: c;
+}
+
+/* Top Right */
+.dot-e {
+    grid-area: e;
+}
+
+/* Middle Left */
+.dot-f {
+    grid-area: f;
+}
+
+/* Middle Right */
+.dot-h {
+    grid-area: h;
+}
+
+/* Bottom Left */
+.dot-i {
+    grid-area: i;
+}
+
+/* Bottom Right */
+.dot-g {
+    grid-area: g;
+}
+
+/* Center */
+
+/* Adjust visibility based on value */
+/* This is a simplified approach; usually we render specific dots. 
+   Here we will use Javascript to insert the correct number of dots 
+   or use classes. Let's stick to a simpler number display if requested, 
+   but realistic dots are nicer. We will implement dot rendering in JS.
+   For now, just styling the dot class. */
+
+/* HP Calculator Styles */
+.hp-calculator {
+    text-align: center;
+}
+
+.hp-calculator h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.hp-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.hp-inputs .input-group {
+    margin-bottom: 0;
+}
+
+.hp-result {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    min-width: 200px;
+}
+
+.hp-result h3 {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hp-value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1.2;
+    margin: 0.5rem 0;
+}
+
+.hp-formula {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
