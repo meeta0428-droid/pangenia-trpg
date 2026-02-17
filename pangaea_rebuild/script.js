@@ -651,3 +651,34 @@ initEquipmentListeners();
 initSaveSystem();
 updateUI();
 
+// --- Firebase Realtime Sync ---
+
+window.addEventListener('firebase-ready', () => {
+    console.log('Firebase ready, initializing sync...');
+    const db = window.firebaseDb;
+    const ref = window.firebaseRef;
+    const set = window.firebaseSet;
+    const onValue = window.firebaseOnValue;
+
+    // Use a shared path for the team pool. 
+    // In a real app, you might generate a unique session ID.
+    const teamPoolRef = ref(db, 'pangea_session/teamPool');
+    const input = document.getElementById('team-pool-value');
+
+    // 1. UI -> Firebase
+    input.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value) || 0;
+        set(teamPoolRef, val).catch(err => console.error('Firebase write failed:', err));
+    });
+
+    // 2. Firebase -> UI
+    onValue(teamPoolRef, (snapshot) => {
+        const val = snapshot.val();
+        // Only update if value exists and is different to avoid cursor jumping if focused
+        if (val !== null && parseInt(input.value) !== val) {
+            input.value = val;
+            console.log('Synced Team Pool from Firebase:', val);
+        }
+    });
+});
+
