@@ -22,6 +22,8 @@
                 .catch(err => console.log('SW registration failed', err));
         }
     </script>
+    <!-- QRCode Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 
 <body>
@@ -295,7 +297,23 @@
                 <div class="next-cost" id="next-cost">5</div>
                 <div class="growth-count">現在の総成長回数: <span id="total-growth-count">0</span></div>
             </div>
+            <button id="btn-share" class="save-load-btn" style="margin-top: 10px; width: 100%; background: #9b59b6;">共有
+                / QRコード</button>
         </section>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qr-modal" class="modal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content"
+            style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 300px; text-align: center; border-radius: 10px;">
+            <span id="close-qr-modal"
+                style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2>共有用QRコード</h2>
+            <div id="qrcode" style="margin: 20px auto; display: flex; justify-content: center;"></div>
+            <p style="font-size: 0.9rem; color: #555;">このQRコードを別の端末で読み取ると、同じチームプールを操作できます。</p>
+            <p id="room-id-display" style="font-size: 0.8rem; color: #888;"></p>
+        </div>
     </div>
     <!-- Firebase SDKs -->
     <script type="module">
