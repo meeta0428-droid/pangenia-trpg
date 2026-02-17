@@ -187,6 +187,35 @@ function updateUI() {
 
     // Update total growth count
     document.getElementById('total-growth-count').textContent = growthHistory.length;
+
+    // --- HP Calculation ---
+    calculateHP();
+}
+
+/**
+ * Calculates and updates Max HP
+ * Formula: 10 + Strength + Body Equip HP + Other Mod
+ */
+function calculateHP() {
+    const strength = getStatValue('strength');
+
+    // Get Body Equipment HP
+    // The 3rd row in equipment section is Body Equip (index 2)
+    const equipRows = document.querySelectorAll('.equipment-section .equip-row');
+    let bodyHp = 0;
+    if (equipRows[2]) {
+        const hpInput = equipRows[2].querySelector('.equip-hp');
+        if (hpInput) {
+            bodyHp = parseInt(hpInput.value) || 0;
+        }
+    }
+
+    // Get Other Mod
+    const otherModInput = document.getElementById('hp-other-mod');
+    const otherMod = parseInt(otherModInput.value) || 0;
+
+    const maxHp = 10 + strength + bodyHp + otherMod;
+    document.getElementById('val-max-hp').textContent = maxHp;
 }
 
 /**
@@ -382,6 +411,18 @@ function initEquipmentListeners() {
         input.addEventListener('input', updateUI);
     });
 
+    // Listen for Body Equip HP changes
+    const hpInputs = document.querySelectorAll('.equip-hp');
+    hpInputs.forEach(input => {
+        input.addEventListener('input', updateUI);
+    });
+
+    // Listen for Other Mod changes
+    const otherModInput = document.getElementById('hp-other-mod');
+    if (otherModInput) {
+        otherModInput.addEventListener('input', updateUI);
+    }
+
     const itemInputs = document.querySelectorAll('.item-cost');
     itemInputs.forEach(input => {
         input.addEventListener('input', updateUI);
@@ -483,7 +524,9 @@ function collectData() {
         growthHistory: growthHistory,
         equipment: Array.from(document.querySelectorAll('.equipment-section .equip-row')).map(row => ({
             name: row.querySelector('.equip-name').value,
-            cost: row.querySelector('.equip-cost').value
+            effect: row.querySelector('.equip-effect') ? row.querySelector('.equip-effect').value : '',
+            cost: row.querySelector('.equip-cost').value,
+            hp: row.querySelector('.equip-hp') ? row.querySelector('.equip-hp').value : 0
         })),
         items: Array.from(document.querySelectorAll('.items-section .item-row')).map(row => ({
             name: row.querySelector('.item-name').value,
@@ -496,7 +539,10 @@ function collectData() {
             reason: document.querySelectorAll('.background-section textarea')[1].value,
             social: document.querySelectorAll('.background-section textarea')[2].value,
             future: document.querySelectorAll('.background-section textarea')[3].value
-        }
+        },
+        hpOtherMod: document.getElementById('hp-other-mod').value,
+        currentHp: document.getElementById('val-current-hp').value,
+        teamPool: document.getElementById('team-pool-value').value
     };
 }
 
@@ -539,6 +585,14 @@ function applyData(data) {
             if (rows[idx]) {
                 rows[idx].querySelector('.equip-name').value = eq.name;
                 rows[idx].querySelector('.equip-cost').value = eq.cost;
+                const effectInput = rows[idx].querySelector('.equip-effect');
+                if (effectInput) {
+                    effectInput.value = eq.effect || '';
+                }
+                const hpInput = rows[idx].querySelector('.equip-hp');
+                if (hpInput && eq.hp !== undefined) {
+                    hpInput.value = eq.hp;
+                }
             }
         });
     }
@@ -570,6 +624,21 @@ function applyData(data) {
         textareas[1].value = data.background.reason || '';
         textareas[2].value = data.background.social || '';
         textareas[3].value = data.background.future || '';
+    }
+
+    // 9. HP Other Mod
+    if (data.hpOtherMod !== undefined) {
+        document.getElementById('hp-other-mod').value = data.hpOtherMod;
+    }
+
+    // 10. Current HP
+    if (data.currentHp !== undefined) {
+        document.getElementById('val-current-hp').value = data.currentHp;
+    }
+
+    // 11. Team Pool
+    if (data.teamPool !== undefined) {
+        document.getElementById('team-pool-value').value = data.teamPool;
     }
 
     updateUI();

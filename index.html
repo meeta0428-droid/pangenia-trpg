@@ -120,22 +120,72 @@
             </div>
         </section>
 
+        <!-- Stats Container modification for HP -->
+        <section class="hp-section glass-panel">
+            <h2>HP計算 (HP)</h2>
+            <div class="hp-row">
+                <div class="hp-display">
+                    <span class="hp-label">最大HP (Max HP)</span>
+                    <span class="hp-value" id="val-max-hp">13</span>
+                </div>
+                <div class="hp-divider">/</div>
+                <div class="hp-display">
+                    <span class="hp-label">現在HP (Current HP)</span>
+                    <input type="number" id="val-current-hp" class="hp-current-input" value="13">
+                </div>
+                <div class="hp-detail">
+                    <span class="hp-formula">10 + 剛 + ボディ装備HP + その他</span>
+                </div>
+                <div class="hp-input-group">
+                    <label for="hp-other-mod">その他補正 (Other Mod)</label>
+                    <input type="number" id="hp-other-mod" value="0" placeholder="+HP">
+                </div>
+            </div>
+        </section>
+
+        <section class="team-pool-section glass-panel">
+            <h2>チームプール (Team Pool)</h2>
+            <div class="input-group">
+                <input type="number" id="team-pool-value" value="0" placeholder="0">
+            </div>
+        </section>
+
         <section class="equipment-section">
             <h2>装備 (Equipment)</h2>
             <div class="equip-row">
-                <label>メイン武器</label>
-                <input type="text" class="equip-name" placeholder="名称">
-                <input type="number" class="equip-cost" placeholder="消費EC" value="0" min="0">
+                <div class="equip-top">
+                    <label>メイン武器</label>
+                    <input type="text" class="equip-name" placeholder="名称">
+                    <span style="font-size: 0.9rem; font-weight: bold; color: #555;">消費EC</span>
+                    <input type="number" class="equip-cost" placeholder="0" value="0" min="0">
+                </div>
+                <div class="equip-bottom">
+                    <input type="text" class="equip-effect" placeholder="効果">
+                </div>
             </div>
             <div class="equip-row">
-                <label>サブ武器</label>
-                <input type="text" class="equip-name" placeholder="名称">
-                <input type="number" class="equip-cost" placeholder="消費EC" value="0" min="0">
+                <div class="equip-top">
+                    <label>サブ武器</label>
+                    <input type="text" class="equip-name" placeholder="名称">
+                    <span style="font-size: 0.9rem; font-weight: bold; color: #555;">消費EC</span>
+                    <input type="number" class="equip-cost" placeholder="0" value="0" min="0">
+                </div>
+                <div class="equip-bottom">
+                    <input type="text" class="equip-effect" placeholder="効果">
+                </div>
             </div>
             <div class="equip-row">
-                <label>ボディ装備</label>
-                <input type="text" class="equip-name" placeholder="名称">
-                <input type="number" class="equip-cost" placeholder="消費EC" value="0" min="0">
+                <div class="equip-top">
+                    <label>ボディ装備</label>
+                    <input type="text" class="equip-name" placeholder="名称">
+                    <span style="font-size: 0.9rem; font-weight: bold; color: #555;">消費EC</span>
+                    <input type="number" class="equip-cost" placeholder="0" value="0" min="0">
+                    <span style="font-size: 0.9rem; font-weight: bold; color: #555;">追加HP</span>
+                    <input type="number" class="equip-hp" placeholder="0" value="0">
+                </div>
+                <div class="equip-bottom">
+                    <input type="text" class="equip-effect" placeholder="効果">
+                </div>
             </div>
         </section>
 

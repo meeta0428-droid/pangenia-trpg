@@ -215,9 +215,24 @@ header p {
 
 .equip-row {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.equip-top {
+    display: flex;
     gap: 15px;
-    margin-bottom: 15px;
     align-items: center;
+    width: 100%;
+}
+
+.equip-bottom {
+    display: flex;
+    width: 100%;
 }
 
 .equip-row label {
@@ -231,8 +246,13 @@ header p {
 }
 
 .equip-row .equip-cost {
-    flex: 1;
-    max-width: 100px;
+    flex: 0.5;
+    max-width: 60px;
+    /* Reduced max-width slightly */
+}
+
+.equip-row .equip-effect {
+    width: 100%;
 }
 
 .items-section {
@@ -492,4 +512,128 @@ button:active {
     .profile-section {
         flex-direction: column;
     }
+}
+
+/* HP Section Styles */
+.hp-section {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 249, 255, 0.9));
+    border: 2px solid var(--primary-color);
+    margin-bottom: 2rem;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.hp-row {
+    display: flex;
+    flex-direction: row;
+    /* Changed to row for side-by-side */
+    justify-content: center;
+    align-items: center;
+    /* Center vertically */
+    gap: 1.5rem;
+    /* Increased gap */
+    flex-wrap: wrap;
+    /* Allow wrapping on small screens */
+}
+
+.hp-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hp-divider {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #cbd5e1;
+    margin: 0 0.5rem;
+}
+
+.hp-label {
+    font-size: 0.9rem;
+    /* Slightly smaller label */
+    color: #64748b;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.hp-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1;
+    /* margin removed to align better with input */
+    margin: 0;
+}
+
+.hp-detail {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    width: 100%;
+    /* Force detail to new line */
+    margin-top: 0.5rem;
+}
+
+.hp-current-input {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    width: 120px;
+    border: none;
+    border-bottom: 3px solid var(--accent-color);
+    background: transparent;
+    text-align: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.hp-current-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.hp-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* Team Pool Section */
+.team-pool-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.team-pool-section .input-group {
+    justify-content: center;
+}
+
+#team-pool-value {
+    width: 150px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--primary-color);
+}
+
+.hp-input-group input {
+    width: 60px;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Equipment HP Input */
+.equip-hp {
+    width: 60px;
+    padding: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    text-align: center;
 }
