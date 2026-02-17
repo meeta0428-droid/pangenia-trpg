@@ -655,6 +655,10 @@ updateUI();
 
 window.addEventListener('firebase-ready', () => {
     console.log('Firebase ready, initializing sync...');
+    const statusEl = document.getElementById('firebase-status');
+    statusEl.textContent = 'Connecting to Firebase...';
+    statusEl.style.color = 'orange';
+
     const db = window.firebaseDb;
     const ref = window.firebaseRef;
     const set = window.firebaseSet;
@@ -667,18 +671,37 @@ window.addEventListener('firebase-ready', () => {
 
     // 1. UI -> Firebase
     input.addEventListener('input', (e) => {
+        statusEl.textContent = 'Syncing...';
         const val = parseInt(e.target.value) || 0;
-        set(teamPoolRef, val).catch(err => console.error('Firebase write failed:', err));
+        set(teamPoolRef, val)
+            .then(() => {
+                statusEl.textContent = 'Synced';
+                statusEl.style.color = 'green';
+                setTimeout(() => statusEl.textContent = 'Online', 2000);
+            })
+            .catch(err => {
+                console.error('Firebase write failed:', err);
+                statusEl.textContent = 'Error: Write Failed';
+                statusEl.style.color = 'red';
+                alert('同期エラー: ' + err.message);
+            });
     });
 
     // 2. Firebase -> UI
     onValue(teamPoolRef, (snapshot) => {
+        statusEl.textContent = 'Online';
+        statusEl.style.color = 'green';
+
         const val = snapshot.val();
         // Only update if value exists and is different to avoid cursor jumping if focused
         if (val !== null && parseInt(input.value) !== val) {
             input.value = val;
             console.log('Synced Team Pool from Firebase:', val);
         }
+    }, (error) => {
+        console.error('Firebase read failed:', error);
+        statusEl.textContent = 'Error: Read Failed';
+        statusEl.style.color = 'red';
+        alert('読み込みエラー: ' + error.message);
     });
 });
-
