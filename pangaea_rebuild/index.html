@@ -368,8 +368,12 @@
                 <div class="next-cost" id="next-cost">5</div>
                 <div class="growth-count">現在の総成長回数: <span id="total-growth-count">0</span></div>
             </div>
-            <button id="btn-share" class="save-load-btn"
-                style="width: 60px; height: 60px; border-radius: 50%; background: #27ae60; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; margin: 10px auto; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(39,174,96,0.4);">共有</button>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+                <button id="btn-share" class="save-load-btn"
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #27ae60; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(39,174,96,0.4);">共有</button>
+                <button id="btn-print" class="save-load-btn no-print" onclick="window.print();"
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #3498db; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(52,152,219,0.4);">PDF</button>
+            </div>
         </section>
         <!-- Firebase SDKs -->
         <!-- Firebase SDKs -->
