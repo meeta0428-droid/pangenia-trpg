@@ -63,20 +63,20 @@ const RACES = {
 };
 
 const JOBS = {
-    hajikiya: { name: "ハジキヤ", description: "古代技術に精通し、銃火器を扱うことを得意とする。アタッカー" },
-    maite: { name: "マイテ", description: "支援を得意とする踊り手。バッファー・アタッカー" },
-    kannagi: { name: "カンナギ", description: "先祖の力を呼び覚まし、力を与える。バッファー・ヒーラー" },
-    majinai: { name: "マジナイ", description: "大地の力を操り、攻撃を行う。アタッカー" },
-    kakure: { name: "カクレ", description: "影に忍び、特異な攻撃を行う。アタッカー・回避型タンク" },
-    matagi: { name: "マタギ", description: "狩猟に特化した戦士。前衛アタッカー" },
-    sakimori: { name: "サキモリ", description: "防御に特化した戦士。前衛タンク" },
-    mawashi: { name: "マワシ", description: "使役獣を伴い、様々な方向に活躍できる。前衛アタッカー・タンク" },
-    kusushi: { name: "クスシ", description: "道具を強化して使うことができる。後衛アタッカー・バッファー・ヒーラー" },
-    kobushi: { name: "コブシ", description: "自らの拳を使い、格闘術で戦う。前衛アタッカー・タンク" },
-    siren: { name: "サイレン", description: "自らの声を使い、様々な効果を及ぼす。後衛バッファー・デバッファー・ヒーラー" },
-    matoi: { name: "マトイ", description: "特殊装備「機構」を纏い、戦う戦士。前衛アタッカー・タンク" },
-    korogashi: { name: "コロガシ", description: "騎鋼獣を駆り、攻撃や防御を行う。前衛アタッカー・タンク" },
-    touken: { name: "トウケン", description: "近接武器を用いて、速度に特化した攻撃を行う。前衛アタッカー・回避型タンク" }
+    hajikiya: { name: "ハジキヤ", description: "巧＋２、知＋１｜古代技術に精通し、銃火器を扱うことを得意とする。アタッカー" },
+    maite: { name: "マイテ", description: "巧＋２、魅＋１｜支援を得意とする踊り手。バッファー・アタッカー" },
+    kannagi: { name: "カンナギ", description: "知＋２、魅＋１｜先祖の力を呼び覚まし、力を与える。バッファー・ヒーラー" },
+    majinai: { name: "マジナイ", description: "知＋３｜大地の力を操り、攻撃を行う。アタッカー" },
+    kakure: { name: "カクレ", description: "速＋２、魅＋１｜影に忍び、特異な攻撃を行う。アタッカー・回避型タンク" },
+    matagi: { name: "マタギ", description: "剛＋２、巧＋１｜狩猟に特化した戦士。前衛アタッカー" },
+    sakimori: { name: "サキモリ", description: "剛＋２、魅＋１｜防御に特化した戦士。前衛タンク" },
+    mawashi: { name: "マワシ", description: "剛＋１、速＋１、魅＋１｜使役獣を伴い、様々な方向に活躍できる。前衛アタッカー・タンク" },
+    kusushi: { name: "クスシ", description: "知＋２、巧＋１｜道具を強化して使うことができる。後衛アタッカー・バッファー・ヒーラー" },
+    kobushi: { name: "コブシ", description: "剛＋２、速＋１｜自らの拳を使い、格闘術で戦う。前衛アタッカー・タンク" },
+    siren: { name: "サイレン", description: "魅＋３｜自らの声を使い、様々な効果を及ぼす。後衛バッファー・デバッファー・ヒーラー" },
+    matoi: { name: "マトイ", description: "巧＋２、剛＋１｜特殊装備「機構」を纏い、戦う戦士。前衛アタッカー・タンク" },
+    korogashi: { name: "コロガシ", description: "巧＋２、速＋１｜騎鋼獣を駆り、攻撃や防御を行う。前衛アタッカー・タンク" },
+    touken: { name: "トウケン", description: "速＋３｜近接武器を用いて、速度に特化した攻撃を行う。前衛アタッカー・回避型タンク" }
 };
 
 // Initial state
