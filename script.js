@@ -226,6 +226,29 @@ function initJobDropdowns() {
         }
     };
 
+    const updateJobOptions = () => {
+        const val1 = job1.value;
+        const val2 = job2.value;
+
+        // Update Job 1 options
+        Array.from(job1.options).forEach(opt => {
+            if (opt.value && opt.value === val2) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        });
+
+        // Update Job 2 options
+        Array.from(job2.options).forEach(opt => {
+            if (opt.value && opt.value === val1) {
+                opt.disabled = true;
+            } else {
+                opt.disabled = false;
+            }
+        });
+    };
+
     [job1, job2].forEach(select => {
         for (const key in JOBS) {
             const option = document.createElement('option');
@@ -235,6 +258,7 @@ function initJobDropdowns() {
         }
         select.addEventListener('change', () => {
             updateDescription(select.id, `${select.id}-desc`);
+            updateJobOptions();
             updateUI();
         });
     });
