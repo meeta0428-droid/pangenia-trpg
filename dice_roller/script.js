@@ -156,7 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateStats(results) {
+        let successCount = 0;
+        let fumbleCount = 0;
+
         for (let i = 1; i <= 6; i++) {
+            if (i >= 4) successCount += results[i];
+            if (i === 1) fumbleCount += results[i];
+
             const count = results[i];
 
             const item = document.createElement('div');
@@ -185,5 +191,20 @@ document.addEventListener('DOMContentLoaded', () => {
             item.appendChild(value);
             statGrid.appendChild(item);
         }
+
+        // Display Total Success Result
+        const totalSuccess = successCount - fumbleCount;
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'stat-item total-result';
+        resultDiv.style.gridColumn = '1 / -1';
+        resultDiv.style.marginTop = '15px';
+        resultDiv.style.background = 'rgba(255, 255, 255, 0.5)';
+        resultDiv.style.padding = '10px';
+        resultDiv.style.borderRadius = '8px';
+        resultDiv.innerHTML = `
+            <div class="stat-label" style="font-size: 1.2em; font-weight: bold;">判定結果 (Total Result)</div>
+            <div class="stat-value" style="font-size: 1.5em; color: var(--primary-color);">${totalSuccess} 成功</div>
+        `;
+        statGrid.appendChild(resultDiv);
     }
 });
