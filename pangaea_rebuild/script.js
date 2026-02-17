@@ -104,6 +104,8 @@ let raceChoices = []; // Array of selected stats for "Any" choices
 // Each item in history: { stat: string, cost: number }
 let growthHistory = [];
 
+console.log("Script loaded. Initializing functions...");
+
 /**
  * Calculates the cost for the Nth growth event.
  * @param {number} n - The growth sequence number (1-indexed).
@@ -144,7 +146,8 @@ function updateUI() {
     const stats = ['strength', 'skill', 'intellect', 'speed', 'charm'];
 
     stats.forEach(stat => {
-        document.getElementById(`val-${stat}`).textContent = getStatValue(stat);
+        const el = document.getElementById(`val-${stat}`);
+        if (el) el.textContent = getStatValue(stat);
     });
 
     // Calculate total cost from history
@@ -174,19 +177,23 @@ function updateUI() {
     const artsInputs = document.querySelectorAll('.arts-input');
     artsInputs.forEach(input => {
         if (input.value.trim() !== '') {
-            totalCost += parseInt(input.dataset.cost);
+            const cost = parseInt(input.dataset.cost) || 0;
+            totalCost += cost;
         }
     });
 
-    document.getElementById('total-cost').textContent = totalCost;
+    const totalCostEl = document.getElementById('total-cost');
+    if (totalCostEl) totalCostEl.textContent = totalCost;
 
     // Calculate next cost
     const nextGrowthIndex = growthHistory.length + 1;
     const nextCost = calculateCost(nextGrowthIndex);
-    document.getElementById('next-cost').textContent = nextCost;
+    const nextCostEl = document.getElementById('next-cost');
+    if (nextCostEl) nextCostEl.textContent = nextCost;
 
     // Update total growth count
-    document.getElementById('total-growth-count').textContent = growthHistory.length;
+    const totalGrowthEl = document.getElementById('total-growth-count');
+    if (totalGrowthEl) totalGrowthEl.textContent = growthHistory.length;
 
     // --- HP Calculation ---
     calculateHP();
@@ -215,7 +222,8 @@ function calculateHP() {
     const otherMod = parseInt(otherModInput.value) || 0;
 
     const maxHp = 10 + strength + bodyHp + otherMod;
-    document.getElementById('val-max-hp').textContent = maxHp;
+    const maxHpEl = document.getElementById('val-max-hp');
+    if (maxHpEl) maxHpEl.textContent = maxHp;
 }
 
 /**
@@ -435,6 +443,8 @@ function initSaveSystem() {
     const selector = document.getElementById('save-slot-select');
     const statusDiv = document.getElementById('slot-status');
 
+    if (!selector) return;
+
     // Generate 50 slots
     for (let i = 1; i <= 50; i++) {
         const opt = document.createElement('option');
@@ -494,6 +504,9 @@ function initSaveSystem() {
 function updateSlotStatus() {
     const selector = document.getElementById('save-slot-select');
     const statusDiv = document.getElementById('slot-status');
+
+    if (!selector) return;
+
     const slot = selector.value;
     const json = localStorage.getItem(`pangaea_char_${slot}`);
 
@@ -638,17 +651,14 @@ function applyData(data) {
     updateUI();
 }
 
-// Initialize
-initRaceDropdown();
-initJobDropdowns();
-initEquipmentListeners();
-initSaveSystem();
-updateUI();
-
 // --- Firebase Realtime Sync & Session Management ---
 
 window.addEventListener('firebase-ready', () => {
     console.log('Firebase ready, initializing sync...');
+    if (typeof window.firebaseDb === 'undefined') {
+        console.warn("Firebase vars not ready yet");
+        return;
+    }
     const db = window.firebaseDb;
     const ref = window.firebaseRef;
     const set = window.firebaseSet;
@@ -671,21 +681,23 @@ window.addEventListener('firebase-ready', () => {
     const input = document.getElementById('team-pool-value');
 
     // 3. UI -> Firebase
-    input.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value) || 0;
-        set(teamPoolRef, val).catch(err => console.error(err));
-    });
+    if (input) {
+        input.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 0;
+            set(teamPoolRef, val).catch(err => console.error(err));
+        });
 
-    // 4. Firebase -> UI
-    onValue(teamPoolRef, (snapshot) => {
-        const val = snapshot.val();
-        // Only update if value exists and is different to avoid cursor jumping if focused
-        if (val !== null && parseInt(input.value) !== val) {
-            input.value = val;
-        }
-    }, (error) => {
-        console.error(error);
-    });
+        // 4. Firebase -> UI
+        onValue(teamPoolRef, (snapshot) => {
+            const val = snapshot.val();
+            // Only update if value exists and is different to avoid cursor jumping if focused
+            if (val !== null && parseInt(input.value) !== val) {
+                input.value = val;
+            }
+        }, (error) => {
+            console.error(error);
+        });
+    }
 
     // --- QR Code & Modal Logic ---
     const modal = document.getElementById('qr-modal');
@@ -698,10 +710,13 @@ window.addEventListener('firebase-ready', () => {
     let qrCodeObj = null;
 
     if (btn) {
-        btn.onclick = function () {
-            modal.style.display = "block";
+        btn.onclick = function (e) {
+            e.preventDefault();
+            console.log("Share Button Clicked");
+            if (modal) modal.style.display = "block";
+
             // Clear previous QR
-            qrContainer.innerHTML = '';
+            if (qrContainer) qrContainer.innerHTML = '';
 
             // Generate QR Code
             const currentUrl = window.location.href;
@@ -709,22 +724,28 @@ window.addEventListener('firebase-ready', () => {
             // Set URL to input
             if (urlInput) urlInput.value = currentUrl;
 
-            if (!qrCodeObj) {
-                // Using global QRCode library
-                new QRCode(qrContainer, {
-                    text: currentUrl,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            } else {
-                new QRCode(qrContainer, {
-                    text: currentUrl,
-                    width: 200,
-                    height: 200
-                });
+            // Using global QRCode library (if available)
+            if (typeof QRCode !== 'undefined' && qrContainer) {
+                if (!qrCodeObj) {
+                    try {
+                        new QRCode(qrContainer, {
+                            text: currentUrl,
+                            width: 200,
+                            height: 200,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+                    } catch (e) { console.error("QR Error", e); }
+                } else {
+                    try {
+                        new QRCode(qrContainer, {
+                            text: currentUrl,
+                            width: 200,
+                            height: 200
+                        });
+                    } catch (e) { console.error("QR Error", e); }
+                }
             }
         }
     }
@@ -784,13 +805,242 @@ window.addEventListener('firebase-ready', () => {
 
     if (span) {
         span.onclick = function () {
-            modal.style.display = "none";
+            if (modal) modal.style.display = "none";
+        }
+    }
+});
+
+// --- Dice Roller Integration ---
+
+// EXPOSE GLOBALLY for default button behavior
+window.openDiceModal = function () {
+    console.log("Global openDiceModal called");
+    const diceModal = document.getElementById('dice-modal');
+    if (diceModal) {
+        diceModal.style.display = "block";
+    } else {
+        alert("エラー: dice-modalが見つかりません");
+    }
+};
+
+// Execute immediately to bind listeners if elements exist
+function initDiceRoller() {
+    console.log("Initializing Dice Roller Logic...");
+    const diceModal = document.getElementById('dice-modal');
+    const openDiceBtn = document.getElementById('btn-open-dice');
+    const closeDiceBtn = document.getElementById('close-dice-modal');
+    const rollBtn = document.getElementById('rollBtn');
+    const diceCountInput = document.getElementById('diceCount');
+    const diceContainer = document.getElementById('diceContainer');
+    const statsPanel = document.getElementById('statsPanel');
+    const statGrid = document.getElementById('statGrid');
+    const historyPanel = document.getElementById('historyPanel');
+    const historyList = document.getElementById('historyList');
+
+    if (!diceModal) {
+        console.warn("dice-modal not found, delaying init...");
+        return;
+    }
+
+    console.log("Dice Roller Elements Found. Binding events.");
+
+    // Consolidate Window Clicks
+    window.addEventListener('click', (event) => {
+        const qrModal = document.getElementById('qr-modal');
+        if (diceModal && event.target == diceModal) {
+            diceModal.style.display = "none";
+        }
+        if (qrModal && event.target == qrModal) {
+            qrModal.style.display = "none";
+        }
+    });
+
+    // Also bind event listener as backup
+    if (openDiceBtn) {
+        openDiceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Open Dice Button Clicked");
+            diceModal.style.display = "block";
+        });
+    }
+
+    if (closeDiceBtn) {
+        closeDiceBtn.onclick = function () {
+            diceModal.style.display = "none";
+        };
+    }
+
+    const MAX_HISTORY = 10;
+    let history = [];
+
+    if (rollBtn) {
+        rollBtn.onclick = function () {
+            console.log("Roll Button Clicked");
+            const count = parseInt(diceCountInput.value);
+            if (isNaN(count) || count < 1 || count > 99) {
+                alert('1から99までの数字を入力してください。');
+                return;
+            }
+            rollDice(count);
+        };
+    }
+
+    function rollDice(count) {
+        diceContainer.innerHTML = '';
+        statGrid.innerHTML = '';
+
+        const results = {};
+        for (let i = 1; i <= 6; i++) {
+            results[i] = 0;
+        }
+
+        for (let i = 0; i < count; i++) {
+            const value = Math.floor(Math.random() * 6) + 1;
+            results[value]++;
+            createDieElement(value);
+        }
+
+        updateStats(results);
+        statsPanel.classList.remove('hidden');
+        statsPanel.style.display = 'block';
+
+        updateHistory(count, results);
+    }
+
+    function updateHistory(count, results) {
+        const timestamp = new Date().toLocaleTimeString();
+        let summaryText = `[${timestamp}] ${count}個: `;
+
+        const details = [];
+        for (let i = 1; i <= 6; i++) {
+            if (results[i] > 0) {
+                let status = '';
+                if (i === 1) status = '(F)';
+                else if (i <= 3) status = '(×)';
+                else status = '(○)';
+
+                details.push(`${i}${status}:${results[i]}`);
+            }
+        }
+
+        summaryText += details.join(', ');
+
+        history.unshift(summaryText);
+        if (history.length > MAX_HISTORY) {
+            history.pop();
+        }
+
+        renderHistory();
+    }
+
+    function renderHistory() {
+        historyList.innerHTML = '';
+        if (history.length > 0) {
+            historyPanel.classList.remove('hidden');
+            history.forEach(itemText => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.style.borderBottom = "1px solid #eee";
+                li.style.padding = "5px 0";
+                li.textContent = itemText;
+                historyList.appendChild(li);
+            });
         }
     }
 
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+    function createDieElement(value) {
+        const die = document.createElement('div');
+        die.className = 'die';
+        die.style.animation = 'none';
+        void die.offsetWidth; // Trigger reflow
+        die.style.animation = 'roll-in 0.5s ease-out';
+
+        const face = document.createElement('div');
+        face.className = 'die-face';
+        face.setAttribute('data-value', value);
+
+        const dotConfig = {
+            1: ['g'],
+            2: ['a', 'i'],
+            3: ['a', 'g', 'i'],
+            4: ['a', 'c', 'h', 'i'],
+            5: ['a', 'c', 'g', 'h', 'i'],
+            6: ['a', 'c', 'e', 'f', 'h', 'i']
+        };
+
+        const positions = dotConfig[value];
+        positions.forEach(pos => {
+            const dot = document.createElement('span');
+            dot.className = `dot dot-${pos}`;
+            face.appendChild(dot);
+        });
+
+        die.appendChild(face);
+        diceContainer.appendChild(die);
+    }
+
+    function updateStats(results) {
+        for (let i = 1; i <= 6; i++) {
+            const count = results[i];
+
+            const item = document.createElement('div');
+            item.className = 'stat-item';
+            item.style.border = '1px solid #ddd';
+            item.style.borderRadius = '8px';
+            item.style.padding = '5px';
+            item.style.display = 'flex';
+            item.style.flexDirection = 'column';
+            item.style.alignItems = 'center';
+
+            const label = document.createElement('div');
+            label.className = 'stat-label';
+
+            let labelText = `${i}`;
+            if (i === 1) {
+                labelText += '(F)';
+                label.classList.add('fumble');
+                label.style.color = 'red';
+                label.style.fontWeight = 'bold';
+            } else if (i <= 3) {
+                labelText += '(×)';
+            } else {
+                labelText += '(○)';
+            }
+
+            label.textContent = labelText;
+
+            const value = document.createElement('div');
+            value.className = 'stat-value';
+            value.textContent = `${count}`;
+            value.style.fontSize = '1.2rem';
+            value.style.fontWeight = 'bold';
+
+            item.appendChild(label);
+            item.appendChild(value);
+            statGrid.appendChild(item);
         }
     }
+}
+
+// Global Initialization Logic
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded. Starting initialization...");
+
+    function safeInit(fn, name) {
+        try {
+            fn();
+            console.log(name + " initialized OK");
+        } catch (e) {
+            console.error("Error in " + name + ":", e);
+        }
+    }
+
+    safeInit(initRaceDropdown, "RaceDropdown");
+    safeInit(initJobDropdowns, "JobDropdowns");
+    safeInit(initEquipmentListeners, "EquipmentListeners");
+    safeInit(initSaveSystem, "SaveSystem");
+    safeInit(updateUI, "UpdateUI");
+    safeInit(initDiceRoller, "DiceRoller");
+
+    console.log("All initialization complete.");
 });
