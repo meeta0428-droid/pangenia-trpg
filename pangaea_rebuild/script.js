@@ -654,49 +654,67 @@ window.addEventListener('firebase-ready', () => {
     const set = window.firebaseSet;
     const onValue = window.firebaseOnValue;
 
+    const statusEl = document.getElementById('firebase-status');
+    const roomDebug = document.getElementById('room-debug');
+
     // 1. Session / Room ID Management
     let roomId = new URLSearchParams(window.location.search).get('room');
     if (!roomId) {
-        // Generate a random room ID (8 chars)
         roomId = Math.random().toString(36).substring(2, 10);
-        // Add to URL without reloading
         const newUrl = `${window.location.pathname}?room=${roomId}`;
         window.history.replaceState({ path: newUrl }, '', newUrl);
-        console.log('Created new room:', roomId);
-    } else {
-        console.log('Joined existing room:', roomId);
     }
+
+    if (roomDebug) roomDebug.textContent = `Room: ${roomId}`;
 
     // Display Room ID in Modal
     const roomDisplay = document.getElementById('room-id-display');
     if (roomDisplay) roomDisplay.textContent = `Room ID: ${roomId}`;
 
+    statusEl.innerHTML = `Connecting..<br>Room: ${roomId}`;
+
     // 2. Firebase Reference with Room ID
-    // Use a unique path for the room
     const teamPoolRef = ref(db, `rooms/${roomId}/teamPool`);
     const input = document.getElementById('team-pool-value');
 
     // 3. UI -> Firebase
     input.addEventListener('input', (e) => {
         const val = parseInt(e.target.value) || 0;
-        set(teamPoolRef, val).catch(err => console.error('Firebase write failed:', err));
+        statusEl.innerHTML = `Sending: ${val}<br>Room: ${roomId}`;
+        set(teamPoolRef, val)
+            .then(() => {
+                statusEl.innerHTML = `Sent: ${val}<br>Room: ${roomId}`;
+                statusEl.style.color = 'lightgreen';
+            })
+            .catch(err => {
+                statusEl.innerHTML = `Error: ${err.message}`;
+                statusEl.style.color = 'red';
+            });
     });
 
     // 4. Firebase -> UI
     onValue(teamPoolRef, (snapshot) => {
         const val = snapshot.val();
+        statusEl.innerHTML = `Received: ${val}<br>Room: ${roomId}`;
+        statusEl.style.color = 'lightgreen';
+
         // Only update if value exists and is different to avoid cursor jumping if focused
         if (val !== null && parseInt(input.value) !== val) {
             input.value = val;
-            console.log('Synced Team Pool from Firebase:', val);
         }
+    }, (error) => {
+        statusEl.innerHTML = `Read Error: ${error.message}`;
+        statusEl.style.color = 'red';
     });
 
     // --- QR Code & Modal Logic ---
     const modal = document.getElementById('qr-modal');
+    // ... (rest of logic)
     const btn = document.getElementById('btn-share');
     const span = document.getElementById('close-qr-modal');
     const qrContainer = document.getElementById('qrcode');
+    const urlInput = document.getElementById('share-url-input');
+    const copyBtn = document.getElementById('btn-copy-url');
     let qrCodeObj = null;
 
     if (btn) {
@@ -707,6 +725,10 @@ window.addEventListener('firebase-ready', () => {
 
             // Generate QR Code
             const currentUrl = window.location.href;
+
+            // Set URL to input
+            if (urlInput) urlInput.value = currentUrl;
+
             if (!qrCodeObj) {
                 // Using global QRCode library
                 new QRCode(qrContainer, {
@@ -725,6 +747,59 @@ window.addEventListener('firebase-ready', () => {
                 });
             }
         }
+    }
+
+    if (copyBtn && urlInput) {
+        copyBtn.onclick = function () {
+            // iOS hack: remove readonly to allow selection
+            const wasReadOnly = urlInput.readOnly;
+            urlInput.readOnly = false;
+
+            urlInput.focus();
+            urlInput.select();
+            urlInput.setSelectionRange(0, 99999); // For mobile devices
+
+            // Try using the modern Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(urlInput.value).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    console.warn('Clipboard API failed', err);
+                    fallbackCopyText();
+                }).finally(() => {
+                    if (wasReadOnly) urlInput.readOnly = true;
+                });
+            } else {
+                // Fallback
+                fallbackCopyText();
+                if (wasReadOnly) urlInput.readOnly = true;
+            }
+        };
+    }
+
+    function fallbackCopyText() {
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showCopySuccess();
+            } else {
+                throw new Error('execCommand returned false');
+            }
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+            // If automatic copy fails, just keep it selected and ask user
+            alert('コピーできませんでした。青く選択されているテキストを長押ししてコピーしてください。');
+        }
+    }
+
+    function showCopySuccess() {
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#2ecc71';
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.background = '#3498db';
+        }, 2000);
     }
 
     if (span) {

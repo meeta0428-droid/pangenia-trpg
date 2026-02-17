@@ -300,64 +300,67 @@
             <button id="btn-share" class="save-load-btn" style="margin-top: 10px; width: 100%; background: #9b59b6;">共有
                 / QRコード</button>
         </section>
-    </div>
-
-    <!-- QR Modal -->
-    <div id="qr-modal" class="modal"
-        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
-        <div class="modal-content"
-            style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 300px; text-align: center; border-radius: 10px;">
-            <span id="close-qr-modal"
-                style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-            <h2>共有用QRコード</h2>
-            <div id="qrcode" style="margin: 20px auto; display: flex; justify-content: center;"></div>
-            <p style="font-size: 0.9rem; color: #555;">このQRコードを別の端末で読み取ると、同じチームプールを操作できます。</p>
-
-            <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                <p style="font-size: 0.9rem; margin-bottom: 5px;">またはURLをコピーして共有:</p>
-                <div style="display: flex; gap: 5px; justify-content: center;">
-                    <input type="text" id="share-url-input" readonly
-                        style="width: 70%; padding: 5px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px;">
-                    <button id="btn-copy-url"
-                        style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Copy</button>
-                </div>
-            </div>
-
-            <p id="room-id-display" style="font-size: 0.8rem; color: #888; margin-top: 10px;"></p>
+        <div id="firebase-status"
+            style="position: fixed; bottom: 10px; right: 10px; font-size: 11px; color: white; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 5px; z-index: 9999; max-width: 200px;">
+            Initializing...<br>
+            <span id="room-debug"></span>
         </div>
-    </div>
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        <!-- Firebase SDKs -->
+        <div id="qr-modal" class="modal"
+            style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+            <div class="modal-content"
+                style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 300px; text-align: center; border-radius: 10px;">
+                <span id="close-qr-modal"
+                    style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                <h2>共有用QRコード</h2>
+                <div id="qrcode" style="margin: 20px auto; display: flex; justify-content: center;"></div>
+                <p style="font-size: 0.9rem; color: #555;">このQRコードを別の端末で読み取ると、同じチームプールを操作できます。</p>
 
-        // TODO: Replace with your specific Firebase project configuration
-        // Firebase Console -> Project Settings -> General -> Your apps -> SDK setup and configuration -> Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbFCDGY7nSMH3lzYnGaYTS6PXxNH2hZy8",
-            authDomain: "pangenia-trpg.firebaseapp.com",
-            databaseURL: "https://pangenia-trpg-default-rtdb.firebaseio.com",
-            projectId: "pangenia-trpg",
-            storageBucket: "pangenia-trpg.firebasestorage.app",
-            messagingSenderId: "972290199529",
-            appId: "1:972290199529:web:71e9a622c0af1d1d130578",
-            measurementId: "G-JEEGBDL61C"
-        };
+                <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <p style="font-size: 0.9rem; margin-bottom: 5px;">またはURLをコピーして共有:</p>
+                    <div style="display: flex; gap: 5px; justify-content: center;">
+                        <input type="text" id="share-url-input" readonly
+                            style="width: 70%; padding: 5px; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 4px; user-select: all; -webkit-user-select: all;">
+                        <button id="btn-copy-url"
+                            style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Copy</button>
+                    </div>
+                </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+                <p id="room-id-display" style="font-size: 0.8rem; color: #888; margin-top: 10px;"></p>
+            </div>
+        </div>
+        <!-- Firebase SDKs -->
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+            import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Expose db and ref/set/onValue to window for use in script.js
-        window.firebaseDb = db;
-        window.firebaseRef = ref;
-        window.firebaseSet = set;
-        window.firebaseOnValue = onValue;
+            // TODO: Replace with your specific Firebase project configuration
+            // Firebase Console -> Project Settings -> General -> Your apps -> SDK setup and configuration -> Config
+            const firebaseConfig = {
+                apiKey: "AIzaSyBbFCDGY7nSMH3lzYnGaYTS6PXxNH2hZy8",
+                authDomain: "pangenia-trpg.firebaseapp.com",
+                databaseURL: "https://pangenia-trpg-default-rtdb.firebaseio.com",
+                projectId: "pangenia-trpg",
+                storageBucket: "pangenia-trpg.firebasestorage.app",
+                messagingSenderId: "972290199529",
+                appId: "1:972290199529:web:71e9a622c0af1d1d130578",
+                measurementId: "G-JEEGBDL61C"
+            };
 
-        // Dispatch event to signal Firebase is ready
-        window.dispatchEvent(new Event('firebase-ready'));
-    </script>
-    <script src="script.js"></script>
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            // Expose db and ref/set/onValue to window for use in script.js
+            window.firebaseDb = db;
+            window.firebaseRef = ref;
+            window.firebaseSet = set;
+            window.firebaseOnValue = onValue;
+
+            // Dispatch event to signal Firebase is ready
+            window.dispatchEvent(new Event('firebase-ready'));
+        </script>
+        <script src="script.js"></script>
 </body>
 
 </html>
