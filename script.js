@@ -390,12 +390,6 @@ function updateStat(stat, change) {
         if (currentGrowths[stat] <= 0) return; // Can only decrease added growths
 
         // Remove the last growth action (LIFO for cost fairness in this simple model)
-        // Note: In a real complex app we might want to ensure we remove *this specific stat's* growth
-        // but for now we follow the previous logic of popping history + reducing count.
-        // Wait, if I have Growth: Str, Int.
-        // If I reduce Str, I am effectively undoing "A growth".
-        // To be precise: If I reduce Str, I should verify I HAVE Str growth.
-
         if (currentGrowths[stat] > 0) {
             currentGrowths[stat]--;
             growthHistory.pop();
@@ -651,57 +645,97 @@ initEquipmentListeners();
 initSaveSystem();
 updateUI();
 
-// --- Firebase Realtime Sync ---
+// --- Firebase Realtime Sync & Session Management ---
 
 window.addEventListener('firebase-ready', () => {
     console.log('Firebase ready, initializing sync...');
-    const statusEl = document.getElementById('firebase-status');
-    statusEl.textContent = 'Connecting to Firebase...';
-    statusEl.style.color = 'orange';
-
     const db = window.firebaseDb;
     const ref = window.firebaseRef;
     const set = window.firebaseSet;
     const onValue = window.firebaseOnValue;
 
-    // Use a shared path for the team pool. 
-    // In a real app, you might generate a unique session ID.
-    const teamPoolRef = ref(db, 'pangea_session/teamPool');
+    // 1. Session / Room ID Management
+    let roomId = new URLSearchParams(window.location.search).get('room');
+    if (!roomId) {
+        // Generate a random room ID (8 chars)
+        roomId = Math.random().toString(36).substring(2, 10);
+        // Add to URL without reloading
+        const newUrl = `${window.location.pathname}?room=${roomId}`;
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+        console.log('Created new room:', roomId);
+    } else {
+        console.log('Joined existing room:', roomId);
+    }
+
+    // Display Room ID in Modal
+    const roomDisplay = document.getElementById('room-id-display');
+    if (roomDisplay) roomDisplay.textContent = `Room ID: ${roomId}`;
+
+    // 2. Firebase Reference with Room ID
+    // Use a unique path for the room
+    const teamPoolRef = ref(db, `rooms/${roomId}/teamPool`);
     const input = document.getElementById('team-pool-value');
 
-    // 1. UI -> Firebase
+    // 3. UI -> Firebase
     input.addEventListener('input', (e) => {
-        statusEl.textContent = 'Syncing...';
         const val = parseInt(e.target.value) || 0;
-        set(teamPoolRef, val)
-            .then(() => {
-                statusEl.textContent = 'Synced';
-                statusEl.style.color = 'green';
-                setTimeout(() => statusEl.textContent = 'Online', 2000);
-            })
-            .catch(err => {
-                console.error('Firebase write failed:', err);
-                statusEl.textContent = 'Error: Write Failed';
-                statusEl.style.color = 'red';
-                alert('同期エラー: ' + err.message);
-            });
+        set(teamPoolRef, val).catch(err => console.error('Firebase write failed:', err));
     });
 
-    // 2. Firebase -> UI
+    // 4. Firebase -> UI
     onValue(teamPoolRef, (snapshot) => {
-        statusEl.textContent = 'Online';
-        statusEl.style.color = 'green';
-
         const val = snapshot.val();
         // Only update if value exists and is different to avoid cursor jumping if focused
         if (val !== null && parseInt(input.value) !== val) {
             input.value = val;
             console.log('Synced Team Pool from Firebase:', val);
         }
-    }, (error) => {
-        console.error('Firebase read failed:', error);
-        statusEl.textContent = 'Error: Read Failed';
-        statusEl.style.color = 'red';
-        alert('読み込みエラー: ' + error.message);
     });
+
+    // --- QR Code & Modal Logic ---
+    const modal = document.getElementById('qr-modal');
+    const btn = document.getElementById('btn-share');
+    const span = document.getElementById('close-qr-modal');
+    const qrContainer = document.getElementById('qrcode');
+    let qrCodeObj = null;
+
+    if (btn) {
+        btn.onclick = function () {
+            modal.style.display = "block";
+            // Clear previous QR
+            qrContainer.innerHTML = '';
+
+            // Generate QR Code
+            const currentUrl = window.location.href;
+            if (!qrCodeObj) {
+                // Using global QRCode library
+                new QRCode(qrContainer, {
+                    text: currentUrl,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } else {
+                new QRCode(qrContainer, {
+                    text: currentUrl,
+                    width: 200,
+                    height: 200
+                });
+            }
+        }
+    }
+
+    if (span) {
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 });
