@@ -439,6 +439,59 @@ function initEquipmentListeners() {
 
 // --- Save/Load System ---
 
+// Expose save/load/delete globally for inline onclick handlers
+window.doSave = function () {
+    try {
+        const selector = document.getElementById('save-slot-select');
+        if (!selector || !selector.value) { alert('スロットを選択してください'); return; }
+        const slot = selector.value;
+        const data = collectData();
+        localStorage.setItem(`pangaea_char_${slot}`, JSON.stringify(data));
+        updateSlotStatus();
+        alert(`Slot ${slot} に保存しました。`);
+    } catch (e) {
+        alert(`保存に失敗しました: ${e.message}`);
+        console.error(e);
+    }
+};
+
+window.doLoad = function () {
+    try {
+        const selector = document.getElementById('save-slot-select');
+        if (!selector || !selector.value) { alert('スロットを選択してください'); return; }
+        const slot = selector.value;
+        const json = localStorage.getItem(`pangaea_char_${slot}`);
+        if (json) {
+            if (confirm(`Slot ${slot} を読み込みますか？現在の入力内容は失われます。`)) {
+                applyData(JSON.parse(json));
+                alert(`Slot ${slot} を読み込みました。`);
+            }
+        } else {
+            alert('保存データがありません。');
+        }
+    } catch (e) {
+        alert(`読み込みに失敗しました: ${e.message}`);
+        console.error(e);
+    }
+};
+
+window.doDelete = function () {
+    try {
+        const selector = document.getElementById('save-slot-select');
+        if (!selector || !selector.value) return;
+        const slot = selector.value;
+        if (localStorage.getItem(`pangaea_char_${slot}`)) {
+            if (confirm(`Slot ${slot} のデータを削除しますか？`)) {
+                localStorage.removeItem(`pangaea_char_${slot}`);
+                updateSlotStatus();
+                alert(`Slot ${slot} を削除しました。`);
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+};
+
 function initSaveSystem() {
     const selector = document.getElementById('save-slot-select');
     const statusDiv = document.getElementById('slot-status');
@@ -457,48 +510,6 @@ function initSaveSystem() {
     updateSlotStatus();
 
     selector.addEventListener('change', updateSlotStatus);
-
-    document.getElementById('btn-save').addEventListener('click', () => {
-        try {
-            const slot = selector.value;
-            const data = collectData();
-            localStorage.setItem(`pangaea_char_${slot}`, JSON.stringify(data));
-            updateSlotStatus();
-            alert(`Slot ${slot} に保存しました。`);
-        } catch (e) {
-            alert(`保存に失敗しました: ${e.message}`);
-            console.error(e);
-        }
-    });
-
-    document.getElementById('btn-load').addEventListener('click', () => {
-        try {
-            const slot = selector.value;
-            const json = localStorage.getItem(`pangaea_char_${slot}`);
-            if (json) {
-                if (confirm(`Slot ${slot} を読み込みますか？現在の入力内容は失われます。`)) {
-                    applyData(JSON.parse(json));
-                    alert(`Slot ${slot} を読み込みました。`);
-                }
-            } else {
-                alert('保存データがありません。');
-            }
-        } catch (e) {
-            alert(`読み込みに失敗しました: ${e.message}`);
-            console.error(e);
-        }
-    });
-
-    document.getElementById('btn-delete').addEventListener('click', () => {
-        const slot = selector.value;
-        if (localStorage.getItem(`pangaea_char_${slot}`)) {
-            if (confirm(`Slot ${slot} のデータを削除しますか？`)) {
-                localStorage.removeItem(`pangaea_char_${slot}`);
-                updateSlotStatus();
-                alert(`Slot ${slot} を削除しました。`);
-            }
-        }
-    });
 }
 
 function updateSlotStatus() {
