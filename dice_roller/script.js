@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStats(results) {
         let successCount = 0;
         let fumbleCount = 0;
+        const rfRank = parseInt(document.getElementById('rfRank').value) || 0;
 
         for (let i = 1; i <= 6; i++) {
             if (i >= 4) successCount += results[i];
@@ -192,6 +193,13 @@ document.addEventListener('DOMContentLoaded', () => {
             statGrid.appendChild(item);
         }
 
+        // Apply RF Rank (Negate Fumbles)
+        let negatedFumbles = 0;
+        if (rfRank > 0 && fumbleCount > 0) {
+            negatedFumbles = Math.min(fumbleCount, rfRank);
+            fumbleCount -= negatedFumbles;
+        }
+
         // Display Total Success Result
         const totalSuccess = successCount - fumbleCount;
         const resultDiv = document.createElement('div');
@@ -201,10 +209,18 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDiv.style.background = 'rgba(255, 255, 255, 0.5)';
         resultDiv.style.padding = '10px';
         resultDiv.style.borderRadius = '8px';
-        resultDiv.innerHTML = `
-            <div class="stat-label" style="font-size: 1.2em; font-weight: bold;">判定結果 (Total Result)</div>
-            <div class="stat-value" style="font-size: 1.5em; color: var(--primary-color);">${totalSuccess} 成功</div>
-        `;
+
+        let resultHTML = `<div class="stat-label" style="font-size: 1.2em; font-weight: bold;">判定結果 (Total Result)</div>`;
+
+        if (negatedFumbles > 0) {
+            resultHTML += `<div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">RFランクによりファンブルを ${negatedFumbles}回 無効化</div>`;
+        }
+
+        resultHTML += `<div class="stat-value" style="font-size: 1.5em; color: var(--primary-color);">${totalSuccess} 成功</div>`;
+
+        resultDiv.innerHTML = resultHTML;
         statGrid.appendChild(resultDiv);
     }
+
+
 });
