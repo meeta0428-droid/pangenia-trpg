@@ -654,9 +654,6 @@ window.addEventListener('firebase-ready', () => {
     const set = window.firebaseSet;
     const onValue = window.firebaseOnValue;
 
-    const statusEl = document.getElementById('firebase-status');
-    const roomDebug = document.getElementById('room-debug');
-
     // 1. Session / Room ID Management
     let roomId = new URLSearchParams(window.location.search).get('room');
     if (!roomId) {
@@ -665,13 +662,9 @@ window.addEventListener('firebase-ready', () => {
         window.history.replaceState({ path: newUrl }, '', newUrl);
     }
 
-    if (roomDebug) roomDebug.textContent = `Room: ${roomId}`;
-
     // Display Room ID in Modal
     const roomDisplay = document.getElementById('room-id-display');
     if (roomDisplay) roomDisplay.textContent = `Room ID: ${roomId}`;
-
-    statusEl.innerHTML = `Connecting..<br>Room: ${roomId}`;
 
     // 2. Firebase Reference with Room ID
     const teamPoolRef = ref(db, `rooms/${roomId}/teamPool`);
@@ -680,31 +673,18 @@ window.addEventListener('firebase-ready', () => {
     // 3. UI -> Firebase
     input.addEventListener('input', (e) => {
         const val = parseInt(e.target.value) || 0;
-        statusEl.innerHTML = `Sending: ${val}<br>Room: ${roomId}`;
-        set(teamPoolRef, val)
-            .then(() => {
-                statusEl.innerHTML = `Sent: ${val}<br>Room: ${roomId}`;
-                statusEl.style.color = 'lightgreen';
-            })
-            .catch(err => {
-                statusEl.innerHTML = `Error: ${err.message}`;
-                statusEl.style.color = 'red';
-            });
+        set(teamPoolRef, val).catch(err => console.error(err));
     });
 
     // 4. Firebase -> UI
     onValue(teamPoolRef, (snapshot) => {
         const val = snapshot.val();
-        statusEl.innerHTML = `Received: ${val}<br>Room: ${roomId}`;
-        statusEl.style.color = 'lightgreen';
-
         // Only update if value exists and is different to avoid cursor jumping if focused
         if (val !== null && parseInt(input.value) !== val) {
             input.value = val;
         }
     }, (error) => {
-        statusEl.innerHTML = `Read Error: ${error.message}`;
-        statusEl.style.color = 'red';
+        console.error(error);
     });
 
     // --- QR Code & Modal Logic ---
