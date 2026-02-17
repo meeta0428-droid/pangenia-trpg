@@ -564,7 +564,8 @@ function collectData() {
         },
         hpOtherMod: document.getElementById('hp-other-mod').value,
         currentHp: document.getElementById('val-current-hp').value,
-        teamPool: document.getElementById('team-pool-value').value
+        teamPool: document.getElementById('team-pool-value').value,
+        roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value)
     };
 }
 
@@ -647,6 +648,14 @@ function applyData(data) {
         textareas[1].value = data.background.reason || '';
         textareas[2].value = data.background.social || '';
         textareas[3].value = data.background.future || '';
+    }
+
+    // 8.5. Role Tags
+    if (data.roletags) {
+        const inputs = document.querySelectorAll('.roletag-input');
+        data.roletags.forEach((val, idx) => {
+            if (inputs[idx]) inputs[idx].value = val;
+        });
     }
 
     // 9. HP Other Mod
