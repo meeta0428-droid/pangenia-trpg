@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main-container">
+        <header>
+            <h1>🎲 Dice Roller</h1>
+            <p>ダイスを振って運試し！</p>
+        </header>
+
+        <section class="controls glass-panel">
+            <div class="input-group">
+                <label for="diceCount">ダイスの個数 (Number of Dice)</label>
+                <input type="number" id="diceCount" min="1" max="99" value="3">
+            </div>
+            <button id="rollBtn" class="primary-btn">ROLL DICE</button>
+        </section>
+
+        <!-- Container for result counts -->
+        <section class="stats-panel glass-panel hidden" id="statsPanel">
+            <h2>結果 (Results)</h2>
+            <div class="stat-grid" id="statGrid">
+                <!-- Stat items will be injected here -->
+            </div>
+        </section>
+
+        <!-- History Container -->
+        <section class="history-panel glass-panel hidden" id="historyPanel">
+            <h2>履歴 (History - Last 10)</h2>
+            <ul id="historyList" class="history-list">
+                <!-- History items will be injected here -->
+            </ul>
+        </section>
+
+        <!-- Container for the dice themselves -->
+        <section class="dice-arena" id="diceContainer">
+            <!-- Dice elements go here -->
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
