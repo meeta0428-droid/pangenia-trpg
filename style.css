@@ -280,19 +280,22 @@ header p {
 }
 
 .header-name {
-    flex: 1;
+    width: 70px;
+    flex-shrink: 0;
 }
 
 .header-effect {
-    flex: 3;
+    flex: 1;
 }
 
 .header-cost {
-    width: 80px;
+    width: 50px;
+    flex-shrink: 0;
 }
 
 .header-count {
-    width: 45px;
+    width: 40px;
+    flex-shrink: 0;
 }
 
 .item-row {
@@ -302,23 +305,22 @@ header p {
 }
 
 .item-row .item-name {
-    flex: 1;
+    width: 70px;
+    flex-shrink: 0;
 }
 
 .item-row .item-effect {
-    flex: 3;
+    flex: 1;
 }
 
 .item-row .item-cost {
-    width: 80px;
-}
-
-.item-row .item-cost {
-    width: 80px;
+    width: 50px;
+    flex-shrink: 0;
 }
 
 .item-row .item-count {
-    width: 45px;
+    width: 40px;
+    flex-shrink: 0;
 }
 
 .arts-section {
