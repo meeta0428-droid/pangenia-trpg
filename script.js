@@ -828,6 +828,141 @@ window.addEventListener('firebase-ready', () => {
         }, 2000);
     }
 
+    // --- Cloud Save / Load Logic ---
+    window.saveToCloud = function () {
+        const data = collectData();
+        if (!data.name) {
+            alert('キャラクター名を入力してください');
+            return;
+        }
+
+        const db = window.firebaseDb;
+        const ref = window.firebaseRef;
+        if (!db || !ref) { alert("Firebase not initialized"); return; }
+
+        let roomId = new URLSearchParams(window.location.search).get('room');
+        const charactersRef = ref(db, `rooms/${roomId}/characters`);
+
+        // ADDED: Timestamp
+        data.lastModified = Date.now();
+        console.log("Saving to cloud...", data);
+
+        const newRef = window.firebasePush(charactersRef);
+        window.firebaseSet(newRef, data)
+            .then(() => {
+                alert(`「${data.name}」をクラウドに保存しました。\nRoom ID: ${roomId}`);
+            })
+            .catch((error) => {
+                console.error("Cloud Save Failed", error);
+                alert('保存に失敗しました。権限がないか、ネットワークエラーです。');
+            });
+    };
+
+    window.loadFromCloud = function () {
+        const db = window.firebaseDb;
+        const ref = window.firebaseRef;
+        if (!db || !ref) { alert("Firebase not initialized"); return; }
+
+        let roomId = new URLSearchParams(window.location.search).get('room');
+        const charactersRef = ref(db, `rooms/${roomId}/characters`);
+
+        const modal = document.getElementById('cloud-load-modal');
+        const listContainer = document.getElementById('cloud-char-list');
+        const closeBtn = document.getElementById('close-cloud-modal');
+
+        if (modal) modal.style.display = 'block';
+        if (listContainer) listContainer.innerHTML = '読み込み中...';
+
+        window.firebaseGet(charactersRef).then((snapshot) => {
+            if (listContainer) listContainer.innerHTML = ''; // Clear loading
+
+            if (snapshot.exists()) {
+                const chars = snapshot.val();
+                if (!chars) {
+                    listContainer.innerHTML = '<div>保存されたキャラクターがいません</div>';
+                    return;
+                }
+
+                Object.keys(chars).forEach((key) => {
+                    const charData = chars[key];
+                    const dateStr = charData.lastModified ? new Date(charData.lastModified).toLocaleString() : '不明';
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.borderBottom = '1px solid #eee';
+                    itemDiv.style.padding = '10px';
+                    itemDiv.style.display = 'flex';
+                    itemDiv.style.justifyContent = 'space-between';
+                    itemDiv.style.alignItems = 'center';
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.innerHTML = `<strong>${charData.name || '名称未設定'}</strong> <span style="font-size:0.8em; color:#666;">(${charData.race || '-'})</span><br><span style="font-size:0.7em; color:#999;">${dateStr}</span>`;
+
+                    const loadBtn = document.createElement('button');
+                    loadBtn.textContent = '読込';
+                    loadBtn.style.marginLeft = '10px';
+                    loadBtn.onclick = function () {
+                        if (confirm(`「${charData.name}」を読み込みますか？\n現在の入力内容は上書きされます。`)) {
+                            applyData(charData);
+                            if (modal) modal.style.display = 'none';
+                            alert('読み込みました！');
+                        }
+                    };
+
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = '削除';
+                    delBtn.style.marginLeft = '5px';
+                    delBtn.style.background = '#e74c3c';
+                    delBtn.style.color = 'white';
+                    delBtn.style.border = 'none';
+                    delBtn.style.borderRadius = '3px';
+                    delBtn.onclick = function () {
+                        if (confirm(`本当に「${charData.name}」を削除しますか？\nこの操作は取り消せません。`)) {
+                            const targetRef = ref(db, `rooms/${roomId}/characters/${key}`);
+                            window.firebaseRemove(targetRef).then(() => {
+                                itemDiv.remove(); // Remove from UI
+                            }).catch(err => alert("削除失敗: " + err));
+                        }
+                    };
+
+                    itemDiv.appendChild(infoDiv);
+                    const btnGroup = document.createElement('div');
+                    btnGroup.appendChild(loadBtn);
+                    btnGroup.appendChild(delBtn);
+                    itemDiv.appendChild(btnGroup);
+
+                    listContainer.appendChild(itemDiv);
+                });
+
+            } else {
+                listContainer.innerHTML = '<div>保存されたキャラクターがいません</div>';
+            }
+        }).catch((error) => {
+            console.error(error);
+            listContainer.innerHTML = '<div style="color:red;">読み込みエラーが発生しました</div>';
+        });
+
+        if (closeBtn) {
+            closeBtn.onclick = function () {
+                modal.style.display = 'none';
+            };
+        }
+
+        // Close on click outside
+        window.onclick = function (event) {
+            const qrModal = document.getElementById('qr-modal');
+            const diceModal = document.getElementById('dice-modal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+            if (qrModal && event.target == qrModal) {
+                qrModal.style.display = "none";
+            }
+            if (diceModal && event.target == diceModal) {
+                diceModal.style.display = "none";
+            }
+        }
+    };
+
     if (span) {
         span.onclick = function () {
             if (modal) modal.style.display = "none";
