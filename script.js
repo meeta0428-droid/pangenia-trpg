@@ -246,7 +246,10 @@ function calculateHP() {
     const otherModInput = document.getElementById('hp-other-mod');
     const otherMod = parseInt(otherModInput.value) || 0;
 
-    const maxHp = 10 + strength + bodyHp + otherMod;
+    // 種族ボーナス（雹の民: HP+5）
+    const raceHpBonus = (currentRaceKey === 'hail') ? 5 : 0;
+
+    const maxHp = 10 + strength + bodyHp + otherMod + raceHpBonus;
     const maxHpEl = document.getElementById('val-max-hp');
     if (maxHpEl) maxHpEl.textContent = maxHp;
 }
