@@ -140,6 +140,31 @@ function getStatValue(statKey) {
 }
 
 /**
+ * RFランク表示を更新する
+ * 1→ランク1, 4→ランク2, 10→ランク3
+ */
+function updateRfRankDisplay() {
+    const input = document.getElementById('rf-rank-value');
+    const display = document.getElementById('rf-rank-display');
+    if (!input || !display) return;
+
+    const val = parseInt(input.value) || 0;
+    let rank = 0;
+    if (val >= 10) {
+        rank = 3;
+    } else if (val >= 4) {
+        rank = 2;
+    } else if (val >= 1) {
+        rank = 1;
+    }
+
+    display.textContent = rank > 0 ? `ランク ${rank}` : '—';
+    // ランクに応じた色分け
+    const colors = ['#999', '#27ae60', '#e67e22', '#e74c3c'];
+    display.style.color = colors[rank] || '#999';
+}
+
+/**
  * Updates the UI based on current state.
  */
 function updateUI() {
@@ -565,6 +590,7 @@ function collectData() {
         hpOtherMod: document.getElementById('hp-other-mod').value,
         currentHp: document.getElementById('val-current-hp').value,
         teamPool: document.getElementById('team-pool-value').value,
+        rfRank: document.getElementById('rf-rank-value').value,
         roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value)
     };
 }
@@ -673,6 +699,12 @@ function applyData(data) {
         document.getElementById('team-pool-value').value = data.teamPool;
     }
 
+    // 12. RF Rank
+    if (data.rfRank !== undefined) {
+        document.getElementById('rf-rank-value').value = data.rfRank;
+        updateRfRankDisplay();
+    }
+
     updateUI();
 }
 
@@ -700,6 +732,13 @@ window.addEventListener('firebase-ready', () => {
     // Display Room ID in Modal
     const roomDisplay = document.getElementById('room-id-display');
     if (roomDisplay) roomDisplay.textContent = `Room ID: ${roomId}`;
+
+    // RFランク表示の更新ロジック
+    const rfRankInput = document.getElementById('rf-rank-value');
+    if (rfRankInput) {
+        rfRankInput.addEventListener('input', updateRfRankDisplay);
+        updateRfRankDisplay(); // 初回実行
+    }
 
     // 2. Firebase Reference with Room ID
     const teamPoolRef = ref(db, `rooms/${roomId}/teamPool`);
