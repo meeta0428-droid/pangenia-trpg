@@ -61,12 +61,21 @@
                 </select>
                 <div class="button-group">
                     <button id="btn-save" class="btn-control"
-                        onclick="if(window.doSave) window.doSave(); else alert('Script not loaded');">保存 (Save)</button>
+                        onclick="if(window.doSave) window.doSave(); else alert('Script not loaded');">保存
+                        (Local)</button>
                     <button id="btn-load" class="btn-control"
-                        onclick="if(window.doLoad) window.doLoad(); else alert('Script not loaded');">読込 (Load)</button>
+                        onclick="if(window.doLoad) window.doLoad(); else alert('Script not loaded');">読込
+                        (Local)</button>
                     <button id="btn-delete" class="btn-control danger"
                         onclick="if(window.doDelete) window.doDelete(); else alert('Script not loaded');">削除
-                        (Delete)</button>
+                        (Local)</button>
+                </div>
+                <!-- Cloud Save/Load -->
+                <div class="button-group" style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                    <button id="btn-cloud-save" class="btn-control" style="background: #8e44ad; color: white;"
+                        onclick="if(window.saveToCloud) window.saveToCloud(); else alert('Script not ready');">クラウド保存</button>
+                    <button id="btn-cloud-load" class="btn-control" style="background: #9b59b6; color: white;"
+                        onclick="if(window.loadFromCloud) window.loadFromCloud(); else alert('Script not ready');">クラウド読込</button>
                 </div>
                 <div id="slot-status" style="margin-top: 8px; font-size: 0.9rem; color: #888;">データなし (Empty)</div>
             </div>
@@ -111,6 +120,22 @@
                             style="list-style: none; padding: 0; text-align: left; font-size: 0.9rem; color: #555;">
                         </ul>
                     </section>
+                </div>
+            </div>
+
+            <!-- Cloud Load Modal -->
+            <div id="cloud-load-modal" class="modal"
+                style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+                <div class="modal-content"
+                    style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 10px;">
+                    <span id="close-cloud-modal"
+                        style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                    <h2>クラウドから読み込み</h2>
+                    <p style="font-size: 0.9rem; color: #666;">このルームに保存されているキャラクター一覧</p>
+                    <div id="cloud-char-list" style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                        <!-- List populated by JS -->
+                        <div style="padding: 10px; text-align: center; color: #999;">読み込み中...</div>
+                    </div>
                 </div>
             </div>
 
@@ -415,7 +440,7 @@
         <!-- Firebase SDKs -->
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-            import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+            import { getDatabase, ref, set, onValue, push, get, child, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
             // TODO: Replace with your specific Firebase project configuration
             // Firebase Console -> Project Settings -> General -> Your apps -> SDK setup and configuration -> Config
@@ -439,6 +464,10 @@
             window.firebaseRef = ref;
             window.firebaseSet = set;
             window.firebaseOnValue = onValue;
+            window.firebasePush = push;
+            window.firebaseGet = get;
+            window.firebaseChild = child;
+            window.firebaseRemove = remove;
 
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
