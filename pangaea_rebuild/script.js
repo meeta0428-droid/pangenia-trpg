@@ -902,17 +902,41 @@ window.addEventListener('firebase-ready', () => {
         // タイムスタンプとオーナーIDを付与
         data.lastModified = Date.now();
         data.ownerId = myOwnerId;
-        console.log("Saving to cloud...", data);
 
-        const newRef = window.firebasePush(charactersRef);
-        window.firebaseSet(newRef, data)
-            .then(() => {
-                alert(`「${data.name}」をクラウドに保存しました。\nRoom ID: ${roomId}`);
-            })
-            .catch((error) => {
-                console.error("Cloud Save Failed", error);
-                alert('保存に失敗しました。権限がないか、ネットワークエラーです。');
+        // 同じ名前・同じオーナーの既存データを検索
+        window.firebaseGet(charactersRef).then((snapshot) => {
+            let existingKey = null;
+            if (snapshot.exists()) {
+                const chars = snapshot.val();
+                for (const key in chars) {
+                    if (chars[key].name === data.name && chars[key].ownerId === myOwnerId) {
+                        existingKey = key;
+                        break;
+                    }
+                }
+            }
+
+            let saveRef;
+            let isUpdate = false;
+            if (existingKey) {
+                // 既存データを上書き
+                saveRef = ref(db, `rooms/${roomId}/characters/${existingKey}`);
+                isUpdate = true;
+            } else {
+                // 新規作成
+                saveRef = window.firebasePush(charactersRef);
+            }
+
+            return window.firebaseSet(saveRef, data).then(() => {
+                const msg = isUpdate
+                    ? `「${data.name}」を上書き保存しました。`
+                    : `「${data.name}」を新規保存しました。`;
+                alert(msg + `\nRoom ID: ${roomId}`);
             });
+        }).catch((error) => {
+            console.error("Cloud Save Failed", error);
+            alert('保存に失敗しました。権限がないか、ネットワークエラーです。');
+        });
     };
 
     window.loadFromCloud = function () {
