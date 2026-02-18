@@ -872,6 +872,19 @@ window.addEventListener('firebase-ready', () => {
     }
 
     // --- Cloud Save / Load Logic ---
+
+    // オーナーIDの取得または生成
+    function getOwnerId() {
+        let ownerId = localStorage.getItem('pangaea-owner-id');
+        if (!ownerId) {
+            ownerId = 'owner-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('pangaea-owner-id', ownerId);
+        }
+        return ownerId;
+    }
+
+    const myOwnerId = getOwnerId();
+
     window.saveToCloud = function () {
         const data = collectData();
         if (!data.name) {
@@ -886,8 +899,9 @@ window.addEventListener('firebase-ready', () => {
         let roomId = new URLSearchParams(window.location.search).get('room');
         const charactersRef = ref(db, `rooms/${roomId}/characters`);
 
-        // ADDED: Timestamp
+        // タイムスタンプとオーナーIDを付与
         data.lastModified = Date.now();
+        data.ownerId = myOwnerId;
         console.log("Saving to cloud...", data);
 
         const newRef = window.firebasePush(charactersRef);
@@ -929,6 +943,7 @@ window.addEventListener('firebase-ready', () => {
                 Object.keys(chars).forEach((key) => {
                     const charData = chars[key];
                     const dateStr = charData.lastModified ? new Date(charData.lastModified).toLocaleString() : '不明';
+                    const isOwner = (charData.ownerId === myOwnerId);
 
                     const itemDiv = document.createElement('div');
                     itemDiv.style.borderBottom = '1px solid #eee';
@@ -938,11 +953,15 @@ window.addEventListener('firebase-ready', () => {
                     itemDiv.style.alignItems = 'center';
 
                     const infoDiv = document.createElement('div');
-                    infoDiv.innerHTML = `<strong>${charData.name || '名称未設定'}</strong> <span style="font-size:0.8em; color:#666;">(${charData.race || '-'})</span><br><span style="font-size:0.7em; color:#999;">${dateStr}</span>`;
+                    const ownerBadge = isOwner ? '<span style="font-size:0.7em; background:#27ae60; color:white; padding:1px 5px; border-radius:3px; margin-left:5px;">自分</span>' : '';
+                    infoDiv.innerHTML = `<strong>${charData.name || '名称未設定'}</strong>${ownerBadge} <span style="font-size:0.8em; color:#666;">(${charData.race || '-'})</span><br><span style="font-size:0.7em; color:#999;">${dateStr}</span>`;
+
+                    const btnGroup = document.createElement('div');
+                    btnGroup.style.display = 'flex';
+                    btnGroup.style.gap = '5px';
 
                     const loadBtn = document.createElement('button');
                     loadBtn.textContent = '読込';
-                    loadBtn.style.marginLeft = '10px';
                     loadBtn.onclick = function () {
                         if (confirm(`「${charData.name}」を読み込みますか？\n現在の入力内容は上書きされます。`)) {
                             applyData(charData);
@@ -950,27 +969,28 @@ window.addEventListener('firebase-ready', () => {
                             alert('読み込みました！');
                         }
                     };
+                    btnGroup.appendChild(loadBtn);
 
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = '削除';
-                    delBtn.style.marginLeft = '5px';
-                    delBtn.style.background = '#e74c3c';
-                    delBtn.style.color = 'white';
-                    delBtn.style.border = 'none';
-                    delBtn.style.borderRadius = '3px';
-                    delBtn.onclick = function () {
-                        if (confirm(`本当に「${charData.name}」を削除しますか？\nこの操作は取り消せません。`)) {
-                            const targetRef = ref(db, `rooms/${roomId}/characters/${key}`);
-                            window.firebaseRemove(targetRef).then(() => {
-                                itemDiv.remove(); // Remove from UI
-                            }).catch(err => alert("削除失敗: " + err));
-                        }
-                    };
+                    // 削除ボタンは自分のデータのみ表示
+                    if (isOwner) {
+                        const delBtn = document.createElement('button');
+                        delBtn.textContent = '削除';
+                        delBtn.style.background = '#e74c3c';
+                        delBtn.style.color = 'white';
+                        delBtn.style.border = 'none';
+                        delBtn.style.borderRadius = '3px';
+                        delBtn.onclick = function () {
+                            if (confirm(`本当に「${charData.name}」を削除しますか？\nこの操作は取り消せません。`)) {
+                                const targetRef = ref(db, `rooms/${roomId}/characters/${key}`);
+                                window.firebaseRemove(targetRef).then(() => {
+                                    itemDiv.remove();
+                                }).catch(err => alert("削除失敗: " + err));
+                            }
+                        };
+                        btnGroup.appendChild(delBtn);
+                    }
 
                     itemDiv.appendChild(infoDiv);
-                    const btnGroup = document.createElement('div');
-                    btnGroup.appendChild(loadBtn);
-                    btnGroup.appendChild(delBtn);
                     itemDiv.appendChild(btnGroup);
 
                     listContainer.appendChild(itemDiv);
