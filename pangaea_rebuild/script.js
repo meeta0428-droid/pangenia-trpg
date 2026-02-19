@@ -172,7 +172,14 @@ function updateUI() {
 
     stats.forEach(stat => {
         const el = document.getElementById(`val-${stat}`);
-        if (el) el.textContent = getStatValue(stat);
+        let displayVal = getStatValue(stat);
+        // 速度ペナルティの反映
+        if (stat === 'speed') {
+            const penaltyInput = document.getElementById('equip-speed-penalty');
+            const penalty = parseInt(penaltyInput?.value) || 0;
+            displayVal -= penalty;
+        }
+        if (el) el.textContent = displayVal;
     });
 
     // Calculate total cost from history
@@ -448,6 +455,12 @@ function initEquipmentListeners() {
         input.addEventListener('input', updateUI);
     });
 
+    // Listen for Speed Penalty changes
+    const speedPenaltyInput = document.getElementById('equip-speed-penalty');
+    if (speedPenaltyInput) {
+        speedPenaltyInput.addEventListener('input', updateUI);
+    }
+
     // Listen for Other Mod changes
     const otherModInput = document.getElementById('hp-other-mod');
     if (otherModInput) {
@@ -578,6 +591,7 @@ function collectData() {
             cost: row.querySelector('.equip-cost').value,
             hp: row.querySelector('.equip-hp') ? row.querySelector('.equip-hp').value : 0
         })),
+        speedPenalty: document.getElementById('equip-speed-penalty') ? document.getElementById('equip-speed-penalty').value : 0,
         items: Array.from(document.querySelectorAll('.items-section .item-row')).map(row => ({
             name: row.querySelector('.item-name').value,
             effect: row.querySelector('.item-effect').value,
@@ -648,6 +662,12 @@ function applyData(data) {
                 }
             }
         });
+    }
+
+    // 5.5. Speed Penalty
+    if (data.speedPenalty !== undefined) {
+        const penaltyInput = document.getElementById('equip-speed-penalty');
+        if (penaltyInput) penaltyInput.value = data.speedPenalty;
     }
 
     // 6. Items
