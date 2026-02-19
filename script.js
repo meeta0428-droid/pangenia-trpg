@@ -753,8 +753,8 @@ window.addEventListener('firebase-ready', () => {
         input.addEventListener('input', (e) => {
             const val = parseInt(e.target.value) || 0;
             set(teamPoolRef, val).catch(err => console.error(err));
-            // RFランクも連動更新
-            if (rfRankInput) {
+            // RFランクも連動更新（上昇時のみ）
+            if (rfRankInput && val > (parseInt(rfRankInput.value) || 0)) {
                 rfRankInput.value = val;
                 updateRfRankDisplay();
             }
