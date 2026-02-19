@@ -96,6 +96,13 @@
                             <input type="number" id="diceCount" min="1" max="99" value="3"
                                 style="padding: 10px; font-size: 1.2rem; width: 60px; text-align: center; border-radius: 5px; border: 1px solid #ccc;">
                         </div>
+                        <div id="fumble-immunity-display"
+                            style="margin-bottom: 12px; padding: 8px 12px; background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); border-radius: 8px; text-align: center; display: none;">
+                            <span style="font-weight: bold; color: #e74c3c;">🛡️ ファンブル無効: </span>
+                            <span id="fumble-immunity-count"
+                                style="font-size: 1.2rem; font-weight: bold; color: #e74c3c;">0</span>
+                            <span style="font-size: 0.85rem; color: #888;"> 回まで</span>
+                        </div>
                         <button id="rollBtn" class="primary-btn"
                             style="background: #6366f1; color: white; padding: 10px 30px; border: none; border-radius: 5px; font-size: 1.1rem; cursor: pointer; width: 100%;">ROLL
                             DICE</button>
@@ -243,6 +250,42 @@
                     <input type="number" id="hp-other-mod" value="0" placeholder="+HP">
                 </div>
             </div>
+
+            <!-- 使役獣HP表示 -->
+            <div id="beast-hp-panel" class="beast-hp-panel" style="display: none;">
+                <div class="beast-hp-row">
+                    <span class="beast-hp-title">🐾 使役獣１</span>
+                    <span class="beast-hp-name" id="beast-hp-label"></span>
+                    <div class="beast-hp-values">
+                        <div class="beast-hp-display">
+                            <span class="hp-label">最大HP</span>
+                            <span class="beast-hp-max" id="beast-max-hp-display">0</span>
+                        </div>
+                        <div class="hp-divider" style="font-size: 1.5rem;">/</div>
+                        <div class="beast-hp-display">
+                            <span class="hp-label">現在HP</span>
+                            <input type="number" id="beast-current-hp" class="beast-hp-input" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="beast2-hp-panel" class="beast-hp-panel" style="display: none;">
+                <div class="beast-hp-row">
+                    <span class="beast-hp-title">🐾 使役獣２</span>
+                    <span class="beast-hp-name" id="beast2-hp-label"></span>
+                    <div class="beast-hp-values">
+                        <div class="beast-hp-display">
+                            <span class="hp-label">最大HP</span>
+                            <span class="beast-hp-max" id="beast2-max-hp-display">0</span>
+                        </div>
+                        <div class="hp-divider" style="font-size: 1.5rem;">/</div>
+                        <div class="beast-hp-display">
+                            <span class="hp-label">現在HP</span>
+                            <input type="number" id="beast2-current-hp" class="beast-hp-input" value="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="team-pool-section glass-panel">
@@ -256,11 +299,11 @@
                 <div style="text-align: center;">
                     <h2 style="margin-top: 0;">RFランク</h2>
                     <div class="input-group">
-                        <input type="number" id="rf-rank-value" value="1" min="1" placeholder="1"
+                        <input type="number" id="rf-rank-value" value="0" min="0" placeholder="0"
                             style="width: 80px; font-size: 1.5rem; font-weight: bold; text-align: center; border: 2px solid var(--primary-color); border-radius: 8px; padding: 10px;">
                     </div>
                     <div id="rf-rank-display"
-                        style="margin-top: 8px; font-size: 2rem; font-weight: bold; color: #8e44ad;">ランク 1</div>
+                        style="margin-top: 8px; font-size: 2rem; font-weight: bold; color: #8e44ad;">ランク 0</div>
                 </div>
             </div>
         </section>
@@ -307,77 +350,81 @@
             </div>
         </section>
 
-        <section class="servant-beast-section glass-panel">
-            <h2>使役獣 (Servant Beast)</h2>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                <div class="input-group" style="flex: 1; min-width: 120px;">
-                    <label>使役獣名</label>
-                    <input type="text" id="beast-name" placeholder="名前">
+        <details class="servant-beast-details">
+            <summary class="servant-beast-summary">使役獣１ (Servant Beast)</summary>
+            <section class="servant-beast-section glass-panel">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>使役獣名</label>
+                        <input type="text" id="beast-name" placeholder="名前">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>タイプ</label>
+                        <input type="text" id="beast-type" placeholder="タイプ">
+                    </div>
                 </div>
-                <div class="input-group" style="flex: 1; min-width: 120px;">
-                    <label>タイプ</label>
-                    <input type="text" id="beast-type" placeholder="タイプ">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>判定D</label>
+                        <input type="text" id="beast-dice" placeholder="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>HP</label>
+                        <input type="number" id="beast-hp" placeholder="0" value="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>反抗度</label>
+                        <input type="number" id="beast-rebellion" placeholder="0" value="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>消費EC</label>
+                        <input type="number" id="beast-cost" placeholder="0" value="0" min="0">
+                    </div>
                 </div>
-            </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>判定D</label>
-                    <input type="text" id="beast-dice" placeholder="0">
+                <div class="input-group">
+                    <label>特殊能力</label>
+                    <textarea id="beast-ability" rows="2" placeholder="特殊能力を入力"></textarea>
                 </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>HP</label>
-                    <input type="number" id="beast-hp" placeholder="0" value="0">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>反抗度</label>
-                    <input type="number" id="beast-rebellion" placeholder="0" value="0">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>消費EC</label>
-                    <input type="number" id="beast-cost" placeholder="0" value="0" min="0">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>特殊能力</label>
-                <textarea id="beast-ability" rows="2" placeholder="特殊能力を入力"></textarea>
-            </div>
-        </section>
+            </section>
+        </details>
 
-        <section class="servant-beast-section glass-panel">
-            <h2>使役獣２ (Servant Beast 2)</h2>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                <div class="input-group" style="flex: 1; min-width: 120px;">
-                    <label>使役獣名</label>
-                    <input type="text" id="beast2-name" placeholder="名前">
+        <details class="servant-beast-details">
+            <summary class="servant-beast-summary">使役獣２ (Servant Beast 2)</summary>
+            <section class="servant-beast-section glass-panel">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>使役獣名</label>
+                        <input type="text" id="beast2-name" placeholder="名前">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>タイプ</label>
+                        <input type="text" id="beast2-type" placeholder="タイプ">
+                    </div>
                 </div>
-                <div class="input-group" style="flex: 1; min-width: 120px;">
-                    <label>タイプ</label>
-                    <input type="text" id="beast2-type" placeholder="タイプ">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>判定D</label>
+                        <input type="text" id="beast2-dice" placeholder="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>HP</label>
+                        <input type="number" id="beast2-hp" placeholder="0" value="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>反抗度</label>
+                        <input type="number" id="beast2-rebellion" placeholder="0" value="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 60px;">
+                        <label>消費EC</label>
+                        <input type="number" id="beast2-cost" placeholder="0" value="0" min="0">
+                    </div>
                 </div>
-            </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>判定D</label>
-                    <input type="text" id="beast2-dice" placeholder="0">
+                <div class="input-group">
+                    <label>特殊能力</label>
+                    <textarea id="beast2-ability" rows="2" placeholder="特殊能力を入力"></textarea>
                 </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>HP</label>
-                    <input type="number" id="beast2-hp" placeholder="0" value="0">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>反抗度</label>
-                    <input type="number" id="beast2-rebellion" placeholder="0" value="0">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 60px;">
-                    <label>消費EC</label>
-                    <input type="number" id="beast2-cost" placeholder="0" value="0" min="0">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>特殊能力</label>
-                <textarea id="beast2-ability" rows="2" placeholder="特殊能力を入力"></textarea>
-            </div>
-        </section>
+            </section>
+        </details>
 
         <section class="items-section">
             <h2>道具 (Items)</h2>

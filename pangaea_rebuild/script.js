@@ -143,20 +143,24 @@ function getStatValue(statKey) {
  * RFランク表示を更新する
  * 1→ランク1, 4→ランク2, 10→ランク3
  */
+/**
+ * 現在のRFランクを取得する
+ * @returns {number} 0〜3のランク値
+ */
+function getRfRank() {
+    const val = parseInt(document.getElementById('rf-rank-value')?.value) || 0;
+    if (val >= 10) return 3;
+    if (val >= 4) return 2;
+    if (val >= 1) return 1;
+    return 0;
+}
+
 function updateRfRankDisplay() {
     const input = document.getElementById('rf-rank-value');
     const display = document.getElementById('rf-rank-display');
     if (!input || !display) return;
 
-    const val = parseInt(input.value) || 0;
-    let rank = 0;
-    if (val >= 10) {
-        rank = 3;
-    } else if (val >= 4) {
-        rank = 2;
-    } else if (val >= 1) {
-        rank = 1;
-    }
+    const rank = getRfRank();
 
     display.textContent = rank > 0 ? `ランク ${rank}` : '—';
     // ランクに応じた色分け
@@ -214,6 +218,11 @@ function updateUI() {
         }
     });
 
+    // 使役獣の消費ECを加算
+    const beastCost = parseInt(document.getElementById('beast-cost')?.value) || 0;
+    const beast2Cost = parseInt(document.getElementById('beast2-cost')?.value) || 0;
+    totalCost += beastCost + beast2Cost;
+
     const totalCostEl = document.getElementById('total-cost');
     if (totalCostEl) totalCostEl.textContent = totalCost;
 
@@ -229,12 +238,67 @@ function updateUI() {
 
     // --- HP Calculation ---
     calculateHP();
+
+    // --- 使役獣HP表示更新 ---
+    updateBeastHpDisplay();
 }
 
 /**
  * Calculates and updates Max HP
  * Formula: 10 + Strength + Body Equip HP + Other Mod
  */
+/**
+ * 使役獣のHP表示を更新する
+ * 使役獣セクションのHP値をHP計算パネルに反映
+ */
+function updateBeastHpDisplay() {
+    // 使役獣１
+    const beastHp = parseInt(document.getElementById('beast-hp')?.value) || 0;
+    const beastName = document.getElementById('beast-name')?.value || '';
+    const beastPanel = document.getElementById('beast-hp-panel');
+    const beastCurrentHpInput = document.getElementById('beast-current-hp');
+    if (beastPanel) {
+        if (beastHp > 0 || beastName) {
+            beastPanel.style.display = 'block';
+            // 最大HP変化時に現在HPも連動
+            const prevMax = parseInt(beastPanel.dataset.prevMaxHp) || 0;
+            if (prevMax !== beastHp && beastCurrentHpInput) {
+                const diff = beastHp - prevMax;
+                const currentVal = parseInt(beastCurrentHpInput.value) || 0;
+                beastCurrentHpInput.value = Math.max(0, currentVal + diff);
+            }
+            beastPanel.dataset.prevMaxHp = beastHp;
+            document.getElementById('beast-max-hp-display').textContent = beastHp;
+            document.getElementById('beast-hp-label').textContent = beastName ? `「${beastName}」` : '';
+        } else {
+            beastPanel.style.display = 'none';
+        }
+    }
+
+    // 使役獣２
+    const beast2Hp = parseInt(document.getElementById('beast2-hp')?.value) || 0;
+    const beast2Name = document.getElementById('beast2-name')?.value || '';
+    const beast2Panel = document.getElementById('beast2-hp-panel');
+    const beast2CurrentHpInput = document.getElementById('beast2-current-hp');
+    if (beast2Panel) {
+        if (beast2Hp > 0 || beast2Name) {
+            beast2Panel.style.display = 'block';
+            // 最大HP変化時に現在HPも連動
+            const prevMax2 = parseInt(beast2Panel.dataset.prevMaxHp) || 0;
+            if (prevMax2 !== beast2Hp && beast2CurrentHpInput) {
+                const diff2 = beast2Hp - prevMax2;
+                const currentVal2 = parseInt(beast2CurrentHpInput.value) || 0;
+                beast2CurrentHpInput.value = Math.max(0, currentVal2 + diff2);
+            }
+            beast2Panel.dataset.prevMaxHp = beast2Hp;
+            document.getElementById('beast2-max-hp-display').textContent = beast2Hp;
+            document.getElementById('beast2-hp-label').textContent = beast2Name ? `「${beast2Name}」` : '';
+        } else {
+            beast2Panel.style.display = 'none';
+        }
+    }
+}
+
 function calculateHP() {
     const strength = getStatValue('strength');
 
@@ -259,7 +323,18 @@ function calculateHP() {
 
     const maxHp = 10 + strength + bodyHp + otherMod + raceHpBonus;
     const maxHpEl = document.getElementById('val-max-hp');
-    if (maxHpEl) maxHpEl.textContent = maxHp;
+    const currentHpInput = document.getElementById('val-current-hp');
+
+    // 最大HP変化時に現在HPも連動
+    if (maxHpEl && currentHpInput) {
+        const prevMax = parseInt(maxHpEl.textContent) || 0;
+        if (prevMax !== maxHp) {
+            const diff = maxHp - prevMax;
+            const currentVal = parseInt(currentHpInput.value) || 0;
+            currentHpInput.value = Math.max(0, currentVal + diff);
+        }
+        maxHpEl.textContent = maxHp;
+    }
 }
 
 /**
@@ -477,6 +552,18 @@ function initEquipmentListeners() {
         // Use 'input' event to update instantly on typing
         input.addEventListener('input', updateUI);
     });
+
+    // 使役獣の消費ECリスナー
+    const beastCostInput = document.getElementById('beast-cost');
+    if (beastCostInput) beastCostInput.addEventListener('input', updateUI);
+    const beast2CostInput = document.getElementById('beast2-cost');
+    if (beast2CostInput) beast2CostInput.addEventListener('input', updateUI);
+
+    // 使役獣のHP・名前リスナー（HPパネル連動用）
+    ['beast-hp', 'beast-name', 'beast2-hp', 'beast2-name'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateUI);
+    });
 }
 
 // --- Save/Load System ---
@@ -617,7 +704,8 @@ function collectData() {
             hp: document.getElementById('beast-hp').value,
             rebellion: document.getElementById('beast-rebellion').value,
             cost: document.getElementById('beast-cost').value,
-            ability: document.getElementById('beast-ability').value
+            ability: document.getElementById('beast-ability').value,
+            currentHp: document.getElementById('beast-current-hp').value
         },
         beast2: {
             name: document.getElementById('beast2-name').value,
@@ -626,7 +714,8 @@ function collectData() {
             hp: document.getElementById('beast2-hp').value,
             rebellion: document.getElementById('beast2-rebellion').value,
             cost: document.getElementById('beast2-cost').value,
-            ability: document.getElementById('beast2-ability').value
+            ability: document.getElementById('beast2-ability').value,
+            currentHp: document.getElementById('beast2-current-hp').value
         }
     };
 }
@@ -750,6 +839,7 @@ function applyData(data) {
         if (data.beast.rebellion !== undefined) document.getElementById('beast-rebellion').value = data.beast.rebellion;
         if (data.beast.cost !== undefined) document.getElementById('beast-cost').value = data.beast.cost;
         if (data.beast.ability !== undefined) document.getElementById('beast-ability').value = data.beast.ability;
+        if (data.beast.currentHp !== undefined) document.getElementById('beast-current-hp').value = data.beast.currentHp;
     }
 
     // 11.6. Servant Beast 2
@@ -761,6 +851,7 @@ function applyData(data) {
         if (data.beast2.rebellion !== undefined) document.getElementById('beast2-rebellion').value = data.beast2.rebellion;
         if (data.beast2.cost !== undefined) document.getElementById('beast2-cost').value = data.beast2.cost;
         if (data.beast2.ability !== undefined) document.getElementById('beast2-ability').value = data.beast2.ability;
+        if (data.beast2.currentHp !== undefined) document.getElementById('beast2-current-hp').value = data.beast2.currentHp;
     }
 
     // 12. RF Rank
@@ -823,9 +914,11 @@ window.addEventListener('firebase-ready', () => {
         // 4. Firebase -> UI
         onValue(teamPoolRef, (snapshot) => {
             const val = snapshot.val();
-            // Only update if value exists and is different to avoid cursor jumping if focused
             if (val !== null && parseInt(input.value) !== val) {
                 input.value = val;
+            } else if (val === null) {
+                // データ未設定時は0を表示
+                input.value = 0;
             }
         }, (error) => {
             console.error(error);
@@ -1130,6 +1223,18 @@ window.openDiceModal = function () {
     const diceModal = document.getElementById('dice-modal');
     if (diceModal) {
         diceModal.style.display = "block";
+        // ファンブル無効数をRFランクから更新
+        const rank = getRfRank();
+        const immunityDisplay = document.getElementById('fumble-immunity-display');
+        const immunityCount = document.getElementById('fumble-immunity-count');
+        if (immunityDisplay && immunityCount) {
+            if (rank > 0) {
+                immunityDisplay.style.display = 'block';
+                immunityCount.textContent = rank;
+            } else {
+                immunityDisplay.style.display = 'none';
+            }
+        }
     } else {
         alert("エラー: dice-modalが見つかりません");
     }
@@ -1215,6 +1320,18 @@ function initDiceRoller() {
         updateStats(results);
         statsPanel.classList.remove('hidden');
         statsPanel.style.display = 'block';
+
+        // 1（ファンブル）が出た回数分、チームプールを加算
+        const fumbleCount = results[1] || 0;
+        if (fumbleCount > 0) {
+            const teamPoolInput = document.getElementById('team-pool-value');
+            if (teamPoolInput) {
+                const currentPool = parseInt(teamPoolInput.value) || 0;
+                teamPoolInput.value = currentPool + fumbleCount;
+                // Firebase同期を発火させる
+                teamPoolInput.dispatchEvent(new Event('input'));
+            }
+        }
 
         updateHistory(count, results);
     }
