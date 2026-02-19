@@ -753,6 +753,11 @@ window.addEventListener('firebase-ready', () => {
         input.addEventListener('input', (e) => {
             const val = parseInt(e.target.value) || 0;
             set(teamPoolRef, val).catch(err => console.error(err));
+            // RFランクも連動更新
+            if (rfRankInput) {
+                rfRankInput.value = val;
+                updateRfRankDisplay();
+            }
         });
 
         // 4. Firebase -> UI
@@ -761,6 +766,11 @@ window.addEventListener('firebase-ready', () => {
             // Only update if value exists and is different to avoid cursor jumping if focused
             if (val !== null && parseInt(input.value) !== val) {
                 input.value = val;
+            }
+            // RFランクも連動更新
+            if (val !== null && rfRankInput) {
+                rfRankInput.value = val;
+                updateRfRankDisplay();
             }
         }, (error) => {
             console.error(error);
