@@ -618,6 +618,15 @@ function collectData() {
             rebellion: document.getElementById('beast-rebellion').value,
             cost: document.getElementById('beast-cost').value,
             ability: document.getElementById('beast-ability').value
+        },
+        beast2: {
+            name: document.getElementById('beast2-name').value,
+            type: document.getElementById('beast2-type').value,
+            dice: document.getElementById('beast2-dice').value,
+            hp: document.getElementById('beast2-hp').value,
+            rebellion: document.getElementById('beast2-rebellion').value,
+            cost: document.getElementById('beast2-cost').value,
+            ability: document.getElementById('beast2-ability').value
         }
     };
 }
@@ -741,6 +750,17 @@ function applyData(data) {
         if (data.beast.rebellion !== undefined) document.getElementById('beast-rebellion').value = data.beast.rebellion;
         if (data.beast.cost !== undefined) document.getElementById('beast-cost').value = data.beast.cost;
         if (data.beast.ability !== undefined) document.getElementById('beast-ability').value = data.beast.ability;
+    }
+
+    // 11.6. Servant Beast 2
+    if (data.beast2) {
+        if (data.beast2.name !== undefined) document.getElementById('beast2-name').value = data.beast2.name;
+        if (data.beast2.type !== undefined) document.getElementById('beast2-type').value = data.beast2.type;
+        if (data.beast2.dice !== undefined) document.getElementById('beast2-dice').value = data.beast2.dice;
+        if (data.beast2.hp !== undefined) document.getElementById('beast2-hp').value = data.beast2.hp;
+        if (data.beast2.rebellion !== undefined) document.getElementById('beast2-rebellion').value = data.beast2.rebellion;
+        if (data.beast2.cost !== undefined) document.getElementById('beast2-cost').value = data.beast2.cost;
+        if (data.beast2.ability !== undefined) document.getElementById('beast2-ability').value = data.beast2.ability;
     }
 
     // 12. RF Rank
