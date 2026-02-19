@@ -609,7 +609,16 @@ function collectData() {
         currentHp: document.getElementById('val-current-hp').value,
         teamPool: document.getElementById('team-pool-value').value,
         rfRank: document.getElementById('rf-rank-value').value,
-        roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value)
+        roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value),
+        beast: {
+            name: document.getElementById('beast-name').value,
+            type: document.getElementById('beast-type').value,
+            dice: document.getElementById('beast-dice').value,
+            hp: document.getElementById('beast-hp').value,
+            rebellion: document.getElementById('beast-rebellion').value,
+            cost: document.getElementById('beast-cost').value,
+            ability: document.getElementById('beast-ability').value
+        }
     };
 }
 
@@ -721,6 +730,17 @@ function applyData(data) {
     // 11. Team Pool
     if (data.teamPool !== undefined) {
         document.getElementById('team-pool-value').value = data.teamPool;
+    }
+
+    // 11.5. Servant Beast
+    if (data.beast) {
+        if (data.beast.name !== undefined) document.getElementById('beast-name').value = data.beast.name;
+        if (data.beast.type !== undefined) document.getElementById('beast-type').value = data.beast.type;
+        if (data.beast.dice !== undefined) document.getElementById('beast-dice').value = data.beast.dice;
+        if (data.beast.hp !== undefined) document.getElementById('beast-hp').value = data.beast.hp;
+        if (data.beast.rebellion !== undefined) document.getElementById('beast-rebellion').value = data.beast.rebellion;
+        if (data.beast.cost !== undefined) document.getElementById('beast-cost').value = data.beast.cost;
+        if (data.beast.ability !== undefined) document.getElementById('beast-ability').value = data.beast.ability;
     }
 
     // 12. RF Rank
