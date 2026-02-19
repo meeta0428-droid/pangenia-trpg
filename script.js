@@ -767,11 +767,6 @@ window.addEventListener('firebase-ready', () => {
             if (val !== null && parseInt(input.value) !== val) {
                 input.value = val;
             }
-            // RFランクも連動更新
-            if (val !== null && rfRankInput) {
-                rfRankInput.value = val;
-                updateRfRankDisplay();
-            }
         }, (error) => {
             console.error(error);
         });
