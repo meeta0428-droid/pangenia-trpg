@@ -210,8 +210,8 @@ function updateUI() {
     });
 
     // Add Arts Pack costs
-    const artsInputs = document.querySelectorAll('.arts-input');
-    artsInputs.forEach(input => {
+    const artsNameInputs = document.querySelectorAll('.arts-name');
+    artsNameInputs.forEach(input => {
         if (input.value.trim() !== '') {
             const cost = parseInt(input.dataset.cost) || 0;
             totalCost += cost;
@@ -493,6 +493,36 @@ function updateRaceChoiceOptions(selects) {
 }
 
 /**
+ * アーツの消費ボタン処理
+ * RF消費に入力された値をチームプールから差し引く
+ */
+function consumeArtsRf(button) {
+    const row = button.closest('.arts-row');
+    if (!row) return;
+
+    const rfInput = row.querySelector('.arts-rf');
+    const rfCost = parseInt(rfInput?.value) || 0;
+
+    if (rfCost <= 0) {
+        alert('RF消費が設定されていません');
+        return;
+    }
+
+    const teamPoolInput = document.getElementById('team-pool-value');
+    if (!teamPoolInput) return;
+
+    const currentPool = parseInt(teamPoolInput.value) || 0;
+    if (currentPool < rfCost) {
+        alert(`チームプールが不足しています（現在: ${currentPool}、必要: ${rfCost}）`);
+        return;
+    }
+
+    teamPoolInput.value = currentPool - rfCost;
+    // Firebase同期を発火
+    teamPoolInput.dispatchEvent(new Event('input'));
+}
+
+/**
  * Handles button clicks to increase or decrease stats.
  */
 function updateStat(stat, change) {
@@ -547,9 +577,8 @@ function initEquipmentListeners() {
         input.addEventListener('input', updateUI);
     });
 
-    const artsInputs = document.querySelectorAll('.arts-input');
-    artsInputs.forEach(input => {
-        // Use 'input' event to update instantly on typing
+    const artsNameInputs = document.querySelectorAll('.arts-name');
+    artsNameInputs.forEach(input => {
         input.addEventListener('input', updateUI);
     });
 
@@ -685,7 +714,11 @@ function collectData() {
             count: row.querySelector('.item-count') ? row.querySelector('.item-count').value : 0,
             cost: row.querySelector('.item-cost').value
         })),
-        arts: Array.from(document.querySelectorAll('.arts-input')).map(input => input.value),
+        arts: Array.from(document.querySelectorAll('.arts-row')).map(row => ({
+            name: row.querySelector('.arts-name')?.value || '',
+            effect: row.querySelector('.arts-effect')?.value || '',
+            rf: row.querySelector('.arts-rf')?.value || ''
+        })),
         background: {
             past: document.querySelectorAll('.background-section textarea')[0].value,
             reason: document.querySelectorAll('.background-section textarea')[1].value,
@@ -792,9 +825,23 @@ function applyData(data) {
 
     // 7. Arts
     if (data.arts) {
-        const inputs = document.querySelectorAll('.arts-input');
-        data.arts.forEach((val, idx) => {
-            if (inputs[idx]) inputs[idx].value = val;
+        const rows = document.querySelectorAll('.arts-row');
+        data.arts.forEach((art, idx) => {
+            if (rows[idx]) {
+                // 新形式（オブジェクト）の場合
+                if (typeof art === 'object') {
+                    const nameInput = rows[idx].querySelector('.arts-name');
+                    const effectInput = rows[idx].querySelector('.arts-effect');
+                    const rfInput = rows[idx].querySelector('.arts-rf');
+                    if (nameInput) nameInput.value = art.name || '';
+                    if (effectInput) effectInput.value = art.effect || '';
+                    if (rfInput) rfInput.value = art.rf || '';
+                } else {
+                    // 旧形式（文字列のみ）との後方互換
+                    const nameInput = rows[idx].querySelector('.arts-name');
+                    if (nameInput) nameInput.value = art;
+                }
+            }
         });
     }
 
