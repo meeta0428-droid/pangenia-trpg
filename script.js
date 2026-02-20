@@ -223,8 +223,24 @@ function updateUI() {
     const beast2Cost = parseInt(document.getElementById('beast2-cost')?.value) || 0;
     totalCost += beastCost + beast2Cost;
 
+    // プレイ履歴の獲得ECを合計し、初期値100に加算する
+    let totalGainedEC = 100;
+    const playEcInputs = document.querySelectorAll('.play-ec');
+    playEcInputs.forEach(input => {
+        const val = parseInt(input.value) || 0;
+        totalGainedEC += val;
+    });
+
     const totalCostEl = document.getElementById('total-cost');
-    if (totalCostEl) totalCostEl.textContent = totalCost;
+    if (totalCostEl) {
+        totalCostEl.textContent = `${totalCost} / ${totalGainedEC}`;
+        // 消費が総計を上回った場合に赤色にするなどの視覚効果（任意）
+        if (totalCost > totalGainedEC) {
+            totalCostEl.style.color = '#e74c3c';
+        } else {
+            totalCostEl.style.color = '';
+        }
+    }
 
     // Calculate next cost
     const nextGrowthIndex = growthHistory.length + 1;

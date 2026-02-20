@@ -617,8 +617,8 @@
 
         <section class="summary-section">
             <div class="summary-card">
-                <h3>総コスト (Total EC)</h3>
-                <div class="total-cost" id="total-cost">0</div>
+                <h3>消費 / 総計 (Total EC)</h3>
+                <div class="total-cost" id="total-cost">0 / 100</div>
             </div>
             <div class="summary-card">
                 <h3>次の成長コスト (Next Cost)</h3>
@@ -692,7 +692,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-playhistory2"></script>
+        <script src="script.js?v=20260220-ec_calc"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
