@@ -357,6 +357,23 @@ function initRaceDropdown() {
     });
 }
 
+function initPlayHistoryListeners() {
+    const btnToday = document.getElementById('btn-today');
+    if (btnToday) {
+        btnToday.addEventListener('click', () => {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateInput = document.getElementById('play-date');
+            if (dateInput) {
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+                updateUI(); // Optional if you want to trigger a save
+            }
+        });
+    }
+}
+
 function initJobDropdowns() {
     const job1 = document.getElementById('job-1');
     const job2 = document.getElementById('job-2');
@@ -730,6 +747,11 @@ function collectData() {
         teamPool: document.getElementById('team-pool-value').value,
         rfRank: document.getElementById('rf-rank-value').value,
         roundCount: document.getElementById('round-count-value') ? document.getElementById('round-count-value').value : 1,
+        playHistory: {
+            scenario: document.getElementById('play-scenario') ? document.getElementById('play-scenario').value : '',
+            ec: document.getElementById('play-ec') ? document.getElementById('play-ec').value : '',
+            date: document.getElementById('play-date') ? document.getElementById('play-date').value : ''
+        },
         roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value),
         beast: {
             name: document.getElementById('beast-name').value,
@@ -912,6 +934,13 @@ function applyData(data) {
     if (data.roundCount !== undefined) {
         const roundCountInput = document.getElementById('round-count-value');
         if (roundCountInput) roundCountInput.value = data.roundCount;
+    }
+
+    // 14. Play History
+    if (data.playHistory) {
+        if (document.getElementById('play-scenario')) document.getElementById('play-scenario').value = data.playHistory.scenario || '';
+        if (document.getElementById('play-ec')) document.getElementById('play-ec').value = data.playHistory.ec || '';
+        if (document.getElementById('play-date')) document.getElementById('play-date').value = data.playHistory.date || '';
     }
 
     updateUI();
@@ -1565,6 +1594,7 @@ function runAllInit() {
     safeInit(initJobDropdowns, "JobDropdowns");
     safeInit(initEquipmentListeners, "EquipmentListeners");
     safeInit(initSaveSystem, "SaveSystem");
+    safeInit(initPlayHistoryListeners, "PlayHistoryListeners");
     safeInit(updateUI, "UpdateUI");
     safeInit(initDiceRoller, "DiceRoller");
 

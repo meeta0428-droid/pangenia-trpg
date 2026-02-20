@@ -590,6 +590,31 @@
             </div>
         </section>
 
+        <section class="play-history-section" style="margin-bottom: 30px;">
+            <h2
+                style="font-family: var(--font-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem; color: var(--primary-color);">
+                プレイ履歴 (Play History)</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
+                <div class="input-group" style="flex: 2; min-width: 150px;">
+                    <label>シナリオ名</label>
+                    <input type="text" id="play-scenario" placeholder="シナリオを入力">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 80px;">
+                    <label>獲得EC</label>
+                    <input type="number" id="play-ec" placeholder="0" min="0">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 140px; position: relative;">
+                    <label>プレイ日</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="date" id="play-date" style="flex: 1; min-height: 48px;">
+                        <button id="btn-today"
+                            style="min-width: 48px; border-radius: 8px; background: #e74c3c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 2px 4px rgba(231,76,60,0.3);"
+                            title="今日の日付を入力">📅</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="summary-section">
             <div class="summary-card">
                 <h3>総コスト (Total EC)</h3>
@@ -667,7 +692,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-round2"></script>
+        <script src="script.js?v=20260220-playhistory"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";

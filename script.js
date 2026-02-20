@@ -357,6 +357,23 @@ function initRaceDropdown() {
     });
 }
 
+function initPlayHistoryListeners() {
+    const btnToday = document.getElementById('btn-today');
+    if (btnToday) {
+        btnToday.addEventListener('click', () => {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateInput = document.getElementById('play-date');
+            if (dateInput) {
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+                updateUI(); // Optional if you want to trigger a save
+            }
+        });
+    }
+}
+
 function initJobDropdowns() {
     const job1 = document.getElementById('job-1');
     const job2 = document.getElementById('job-2');
@@ -730,6 +747,11 @@ function collectData() {
         teamPool: document.getElementById('team-pool-value').value,
         rfRank: document.getElementById('rf-rank-value').value,
         roundCount: document.getElementById('round-count-value') ? document.getElementById('round-count-value').value : 1,
+        playHistory: {
+            scenario: document.getElementById('play-scenario') ? document.getElementById('play-scenario').value : '',
+            ec: document.getElementById('play-ec') ? document.getElementById('play-ec').value : '',
+            date: document.getElementById('play-date') ? document.getElementById('play-date').value : ''
+        },
         roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value),
         beast: {
             name: document.getElementById('beast-name').value,
@@ -914,6 +936,13 @@ function applyData(data) {
         if (roundCountInput) roundCountInput.value = data.roundCount;
     }
 
+    // 14. Play History
+    if (data.playHistory) {
+        if (document.getElementById('play-scenario')) document.getElementById('play-scenario').value = data.playHistory.scenario || '';
+        if (document.getElementById('play-ec')) document.getElementById('play-ec').value = data.playHistory.ec || '';
+        if (document.getElementById('play-date')) document.getElementById('play-date').value = data.playHistory.date || '';
+    }
+
     updateUI();
 }
 
@@ -981,11 +1010,17 @@ window.addEventListener('firebase-ready', () => {
 
     // 5. Round Count Sync (UI -> Firebase & Firebase -> UI)
     const roundCountRef = ref(db, `rooms/${roomId}/roundCount`);
-    const roundCountInput = document.getElementById('round-count-value');
+    const roundCountInputSync = document.getElementById('round-count-value');
 
-    if (roundCountInput) {
+    if (roundCountInputSync) {
         // UI -> Firebase
-        roundCountInput.addEventListener('input', (e) => {
+        roundCountInputSync.addEventListener('input', (e) => {
+            // isSyncEvent が true の場合は GM 側からの同期なので Firebase には送り返さない
+            if (e.isSyncEvent) {
+                // ローカルのUI更新等があればここで呼ぶ
+                if (typeof window.updateUI === 'function') window.updateUI();
+                return;
+            }
             const val = parseInt(e.target.value) || 1;
             set(roundCountRef, val).catch(err => console.error(err));
         });
@@ -993,11 +1028,11 @@ window.addEventListener('firebase-ready', () => {
         // Firebase -> UI
         onValue(roundCountRef, (snapshot) => {
             const val = snapshot.val();
-            if (val !== null && parseInt(roundCountInput.value) !== val) {
-                roundCountInput.value = val;
+            if (val !== null && parseInt(roundCountInputSync.value) !== val) {
+                roundCountInputSync.value = val;
             } else if (val === null) {
                 // 初期値
-                roundCountInput.value = 1;
+                roundCountInputSync.value = 1;
             }
         }, (error) => {
             console.error(error);
@@ -1296,6 +1331,18 @@ window.addEventListener('firebase-ready', () => {
 
 // --- Dice Roller Integration ---
 
+window.rollStatDice = function (statName) {
+    const diceCountStr = document.getElementById(`val-${statName}`).innerText;
+    const diceCount = parseInt(diceCountStr) || 1;
+    const diceCountInput = document.getElementById('diceCount');
+    if (diceCountInput) {
+        diceCountInput.value = diceCount;
+    }
+    if (window.openDiceModal) {
+        window.openDiceModal();
+    }
+};
+
 // EXPOSE GLOBALLY for default button behavior
 window.openDiceModal = function () {
     console.log("Global openDiceModal called");
@@ -1547,6 +1594,7 @@ function runAllInit() {
     safeInit(initJobDropdowns, "JobDropdowns");
     safeInit(initEquipmentListeners, "EquipmentListeners");
     safeInit(initSaveSystem, "SaveSystem");
+    safeInit(initPlayHistoryListeners, "PlayHistoryListeners");
     safeInit(updateUI, "UpdateUI");
     safeInit(initDiceRoller, "DiceRoller");
 
