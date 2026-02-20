@@ -1143,3 +1143,114 @@ button:active {
     outline: none;
     background: rgba(255, 255, 255, 0.5);
 }
+
+/* === スマートフォン向けレスポンシブ対応 (max-width: 600px) === */
+@media (max-width: 600px) {
+
+    /* 1. 全体の余白・フォントサイズ調整 */
+    .container {
+        padding: 15px;
+        width: 95%;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    /* 2. プロフィールやジョブの縦積み */
+    .profile-section,
+    .job-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* 3. HP周りの縮小と縦積み */
+    .hp-row {
+        gap: 10px;
+    }
+
+    .hp-value {
+        font-size: 2.2rem;
+    }
+
+    .hp-current-input {
+        font-size: 2.2rem;
+        width: 80px;
+    }
+
+    .hp-divider {
+        font-size: 2rem;
+    }
+
+    /* 4. チームプール・ラウンド数の余白調整 */
+    .team-pool-section>div {
+        gap: 15px !important;
+    }
+
+    #team-pool-value {
+        font-size: 2rem;
+        width: 100px;
+        padding: 5px;
+    }
+
+    #rf-rank-display {
+        font-size: 1.5rem !important;
+    }
+
+    /* 5. 装備の折り返し */
+    .equip-top {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .equip-row label {
+        width: 100%;
+    }
+
+    .equip-row .equip-name {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .equip-middle {
+        flex-wrap: wrap;
+        gap: 5px !important;
+    }
+
+    /* 6. アイテムの2段組み */
+    .item-header {
+        display: none;
+    }
+
+    .item-row {
+        flex-wrap: wrap;
+        gap: 5px;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+
+    .item-row .item-name,
+    .item-row .item-effect {
+        flex: 1 1 100%;
+        width: 100%;
+        margin-bottom: 2px;
+    }
+
+    .item-row .item-count,
+    .item-row .item-cost {
+        flex: 1 1 45%;
+    }
+
+    /* 7. ボタン群の折り返しとタップ領域拡大 */
+    .control-panel .button-group {
+        flex-wrap: wrap;
+    }
+
+    .btn-control {
+        padding: 12px;
+        font-size: 0.95rem;
+        flex: 1 1 45%;
+    }
+}

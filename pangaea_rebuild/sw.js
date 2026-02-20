@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260220-round2';
+const CACHE_NAME = 'pangaea-rebuild-v20260220-mobile';
 const ASSETS = [
     './',
     './index.html',
