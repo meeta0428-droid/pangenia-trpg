@@ -590,31 +590,6 @@
             </div>
         </section>
 
-        <section class="play-history-section" style="margin-bottom: 30px;">
-            <h2
-                style="font-family: var(--font-heading); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem; color: var(--primary-color);">
-                プレイ履歴 (Play History)</h2>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
-                <div class="input-group" style="flex: 2; min-width: 150px;">
-                    <label>シナリオ名</label>
-                    <input type="text" id="play-scenario" placeholder="シナリオを入力">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 80px;">
-                    <label>獲得EC</label>
-                    <input type="number" id="play-ec" placeholder="0" min="0">
-                </div>
-                <div class="input-group" style="flex: 1; min-width: 140px; position: relative;">
-                    <label>プレイ日</label>
-                    <div style="display: flex; gap: 5px;">
-                        <input type="date" id="play-date" style="flex: 1; min-height: 48px;">
-                        <button id="btn-today"
-                            style="min-width: 48px; border-radius: 8px; background: #e74c3c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 2px 4px rgba(231,76,60,0.3);"
-                            title="今日の日付を入力">📅</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section class="summary-section">
             <div class="summary-card">
                 <h3>消費 / 総計 (Total EC)</h3>
@@ -630,6 +605,44 @@
                     style="width: 60px; height: 60px; border-radius: 50%; background: #27ae60; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(39,174,96,0.4);">共有</button>
                 <button id="btn-print" class="save-load-btn no-print" onclick="window.print();"
                     style="width: 60px; height: 60px; border-radius: 50%; background: #3498db; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(52,152,219,0.4);">PDF</button>
+            </div>
+        </section>
+
+        <section class="play-history-section">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">
+                <h2
+                    style="margin: 0; font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-color);">
+                    プレイ履歴 (Play History)</h2>
+                <button id="btn-add-history" class="no-print"
+                    style="background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(98, 0, 238, 0.3);">＋</button>
+            </div>
+
+            <div id="play-history-container">
+                <!-- プレイ履歴の行がここに追加されます -->
+                <div class="play-history-row"
+                    style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div class="input-group" style="flex: 2; min-width: 150px;">
+                        <label>シナリオ名</label>
+                        <input type="text" class="play-scenario" placeholder="シナリオを入力">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 80px;">
+                        <label>獲得EC</label>
+                        <input type="number" class="play-ec" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 140px;">
+                        <label>プレイ日</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="date" class="play-date" style="flex: 1;">
+                            <button class="btn-today no-print"
+                                style="width: 40px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;"
+                                title="今日の日付を入力">📅</button>
+                            <button class="btn-remove-history no-print"
+                                style="width: 40px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;"
+                                title="行を削除">×</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
         <!-- Firebase SDKs -->
