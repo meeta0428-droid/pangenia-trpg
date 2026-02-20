@@ -333,14 +333,17 @@
                 </div>
             </div>
             <div class="equip-row">
-                <div class="equip-top">
-                    <label>ボディ装備</label>
+                <label style="width: 100%; display: block; margin-bottom: 5px;">ボディ装備</label>
+                <div class="equip-top" style="margin-bottom: 8px;">
                     <input type="text" class="equip-name" placeholder="名称">
                     <span style="font-size: 0.9rem; font-weight: bold; color: #555;">追加HP</span>
                     <input type="number" class="equip-hp" placeholder="0" value="0">
+                </div>
+                <div class="equip-middle"
+                    style="display: flex; gap: 15px; align-items: center; width: 100%; margin-bottom: 8px;">
                     <span style="font-size: 0.9rem; font-weight: bold; color: #e74c3c;">速度ペナ</span>
                     <input type="number" id="equip-speed-penalty" placeholder="0" value="0" min="0"
-                        style="width: 50px; text-align: center; border: 1px solid #e74c3c; border-radius: 4px;">
+                        style="width: 70px; padding: 0.5rem; text-align: center; border: 1px solid #e74c3c; border-radius: 4px;">
                     <span style="font-size: 0.9rem; font-weight: bold; color: #555;">消費EC</span>
                     <input type="number" class="equip-cost" placeholder="0" value="0" min="0">
                 </div>
