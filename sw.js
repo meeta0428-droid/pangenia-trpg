@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260220-playhistory';
+const CACHE_NAME = 'pangaea-rebuild-v20260220-playhistory2';
 const ASSETS = [
     './',
     './index.html',

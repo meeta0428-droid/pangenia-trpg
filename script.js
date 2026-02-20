@@ -358,18 +358,81 @@ function initRaceDropdown() {
 }
 
 function initPlayHistoryListeners() {
-    const btnToday = document.getElementById('btn-today');
-    if (btnToday) {
-        btnToday.addEventListener('click', () => {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            const dateInput = document.getElementById('play-date');
-            if (dateInput) {
-                dateInput.value = `${yyyy}-${mm}-${dd}`;
-                updateUI(); // Optional if you want to trigger a save
+    const container = document.getElementById('play-history-container');
+    const btnAdd = document.getElementById('btn-add-history');
+
+    if (!container) return;
+
+    // 「今日の日付」および「削除」ボタンのイベント委譲
+    container.addEventListener('click', (e) => {
+        const target = e.target;
+
+        // 今日ボタン
+        if (target.classList.contains('btn-today')) {
+            const row = target.closest('.play-history-row');
+            if (row) {
+                const dateInput = row.querySelector('.play-date');
+                if (dateInput) {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    dateInput.value = `${yyyy}-${mm}-${dd}`;
+                    updateUI();
+                }
             }
+        }
+
+        // 削除ボタン
+        if (target.classList.contains('btn-remove-history')) {
+            const row = target.closest('.play-history-row');
+            if (row) {
+                row.remove();
+                updateUI();
+            }
+        }
+    });
+
+    // 入力変更でUI（計算など）を更新するイベント委譲
+    container.addEventListener('input', (e) => {
+        if (e.target.tagName === 'INPUT') {
+            updateUI();
+        }
+    });
+
+    // 「＋」ボタンで行を追加
+    if (btnAdd) {
+        btnAdd.addEventListener('click', () => {
+            const newRow = document.createElement('div');
+            newRow.className = 'play-history-row';
+            newRow.style.display = 'flex';
+            newRow.style.gap = '15px';
+            newRow.style.flexWrap = 'wrap';
+            newRow.style.marginBottom = '15px';
+            newRow.style.background = 'rgba(0,0,0,0.02)';
+            newRow.style.padding = '10px';
+            newRow.style.borderRadius = '8px';
+            newRow.style.border = '1px solid var(--border-color)';
+
+            newRow.innerHTML = `
+                <div class="input-group" style="flex: 2; min-width: 150px;">
+                    <label>シナリオ名</label>
+                    <input type="text" class="play-scenario" placeholder="シナリオを入力">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 80px;">
+                    <label>獲得EC</label>
+                    <input type="number" class="play-ec" placeholder="0" min="0">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 140px;">
+                    <label>プレイ日</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="date" class="play-date" style="flex: 1;">
+                        <button class="btn-today no-print" style="width: 40px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" title="今日の日付を入力">📅</button>
+                        <button class="btn-remove-history no-print" style="width: 40px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" title="行を削除">×</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
         });
     }
 }
@@ -747,11 +810,11 @@ function collectData() {
         teamPool: document.getElementById('team-pool-value').value,
         rfRank: document.getElementById('rf-rank-value').value,
         roundCount: document.getElementById('round-count-value') ? document.getElementById('round-count-value').value : 1,
-        playHistory: {
-            scenario: document.getElementById('play-scenario') ? document.getElementById('play-scenario').value : '',
-            ec: document.getElementById('play-ec') ? document.getElementById('play-ec').value : '',
-            date: document.getElementById('play-date') ? document.getElementById('play-date').value : ''
-        },
+        playHistory: Array.from(document.querySelectorAll('.play-history-row')).map(row => ({
+            scenario: row.querySelector('.play-scenario')?.value || '',
+            ec: row.querySelector('.play-ec')?.value || '',
+            date: row.querySelector('.play-date')?.value || ''
+        })),
         roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value),
         beast: {
             name: document.getElementById('beast-name').value,
@@ -937,10 +1000,51 @@ function applyData(data) {
     }
 
     // 14. Play History
-    if (data.playHistory) {
-        if (document.getElementById('play-scenario')) document.getElementById('play-scenario').value = data.playHistory.scenario || '';
-        if (document.getElementById('play-ec')) document.getElementById('play-ec').value = data.playHistory.ec || '';
-        if (document.getElementById('play-date')) document.getElementById('play-date').value = data.playHistory.date || '';
+    const historyContainer = document.getElementById('play-history-container');
+    if (historyContainer && data.playHistory) {
+        // 現在の行をクリア
+        historyContainer.innerHTML = '';
+
+        // 配列かどうかチェック（旧バージョンデータ互換性のため）
+        const historyArray = Array.isArray(data.playHistory) ? data.playHistory : [data.playHistory];
+
+        historyArray.forEach(hist => {
+            const newRow = document.createElement('div');
+            newRow.className = 'play-history-row';
+            newRow.style.display = 'flex';
+            newRow.style.gap = '15px';
+            newRow.style.flexWrap = 'wrap';
+            newRow.style.marginBottom = '15px';
+            newRow.style.background = 'rgba(0,0,0,0.02)';
+            newRow.style.padding = '10px';
+            newRow.style.borderRadius = '8px';
+            newRow.style.border = '1px solid var(--border-color)';
+
+            newRow.innerHTML = `
+                <div class="input-group" style="flex: 2; min-width: 150px;">
+                    <label>シナリオ名</label>
+                    <input type="text" class="play-scenario" placeholder="シナリオを入力" value="${hist.scenario || ''}">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 80px;">
+                    <label>獲得EC</label>
+                    <input type="number" class="play-ec" placeholder="0" min="0" value="${hist.ec || ''}">
+                </div>
+                <div class="input-group" style="flex: 1; min-width: 140px;">
+                    <label>プレイ日</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="date" class="play-date" style="flex: 1;" value="${hist.date || ''}">
+                        <button class="btn-today no-print" style="width: 40px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" title="今日の日付を入力">📅</button>
+                        <button class="btn-remove-history no-print" style="width: 40px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" title="行を削除">×</button>
+                    </div>
+                </div>
+            `;
+            historyContainer.appendChild(newRow);
+        });
+
+        // もし履歴が空になってしまったら1行だけデフォルト追加しておく
+        if (historyArray.length === 0) {
+            document.getElementById('btn-add-history')?.click();
+        }
     }
 
     updateUI();
