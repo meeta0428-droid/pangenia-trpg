@@ -1,0 +1,28 @@
+{
+    "rewrites": [
+        {
+            "source": "/",
+            "destination": "/pangaea_rebuild/index.html"
+        },
+        {
+            "source": "/script.js",
+            "destination": "/pangaea_rebuild/script.js"
+        },
+        {
+            "source": "/style.css",
+            "destination": "/pangaea_rebuild/style.css"
+        },
+        {
+            "source": "/sw.js",
+            "destination": "/pangaea_rebuild/sw.js"
+        },
+        {
+            "source": "/icon.svg",
+            "destination": "/pangaea_rebuild/icon.svg"
+        },
+        {
+            "source": "/manifest.json",
+            "destination": "/pangaea_rebuild/manifest.json"
+        }
+    ]
+}
