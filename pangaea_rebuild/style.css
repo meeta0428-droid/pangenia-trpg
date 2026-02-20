@@ -504,6 +504,36 @@ textarea:focus {
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--primary-color);
+    display: flex;
+    align-items: center;
+}
+
+.btn-stat-roll {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #27ae60;
+    color: white;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(39, 174, 96, 0.3);
+    transition: transform 0.1s;
+    padding: 0;
+}
+
+.btn-stat-roll:hover {
+    transform: scale(1.1);
+    background: #2ecc71;
+}
+
+.btn-stat-roll:active {
+    transform: scale(0.95);
 }
 
 .stat-controls {

@@ -1264,6 +1264,18 @@ window.addEventListener('firebase-ready', () => {
 
 // --- Dice Roller Integration ---
 
+window.rollStatDice = function (statName) {
+    const diceCountStr = document.getElementById(`val-${statName}`).innerText;
+    const diceCount = parseInt(diceCountStr) || 1;
+    const diceCountInput = document.getElementById('diceCount');
+    if (diceCountInput) {
+        diceCountInput.value = diceCount;
+    }
+    if (window.openDiceModal) {
+        window.openDiceModal();
+    }
+};
+
 // EXPOSE GLOBALLY for default button behavior
 window.openDiceModal = function () {
     console.log("Global openDiceModal called");
