@@ -667,7 +667,61 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-round1"></script>
+        <script src="script.js?v=20260220-round2"></script>
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+            import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+            const gmFirebaseConfig = {
+                apiKey: "AIzaSyDPls4ObhYos44JRLbSD7AEECaKwsWAfxM",
+                authDomain: "pangeniagm.firebaseapp.com",
+                databaseURL: "https://pangeniagm-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "pangeniagm",
+                storageBucket: "pangeniagm.firebasestorage.app",
+                messagingSenderId: "340424843177",
+                appId: "1:340424843177:web:dfa24f920f2646dd202eb8"
+            };
+
+            // "GMSync" という別名で初期化することで、既存のクラウドセーブ用と競合しない
+            const gmApp = initializeApp(gmFirebaseConfig, "GMSync");
+            const gmDb = getDatabase(gmApp);
+
+            // 現在のURLパラメータからルームIDを取得
+            let gmRoomId = new URLSearchParams(window.location.search).get('room');
+
+            // ルームIDが存在する場合のみ同期を実行
+            if (gmRoomId) {
+                const roundInput = document.getElementById('round-count-value');
+
+                // 中盤ラウンドの監視
+                onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/midRound`), (snapshot) => {
+                    const val = snapshot.val();
+                    if (val !== null && roundInput) {
+                        const numVal = parseInt(val) || 1;
+                        if (parseInt(roundInput.value) !== numVal) {
+                            roundInput.value = numVal;
+                            const event = new Event('input', { bubbles: true });
+                            event.isSyncEvent = true;
+                            roundInput.dispatchEvent(event);
+                        }
+                    }
+                });
+
+                // 終盤ラウンドの監視
+                onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/endRound`), (snapshot) => {
+                    const val = snapshot.val();
+                    if (val !== null && roundInput) {
+                        const numVal = parseInt(val) || 1;
+                        if (parseInt(roundInput.value) !== numVal) {
+                            roundInput.value = numVal;
+                            const event = new Event('input', { bubbles: true });
+                            event.isSyncEvent = true;
+                            roundInput.dispatchEvent(event);
+                        }
+                    }
+                });
+            }
+        </script>
 </body>
 
 </html>

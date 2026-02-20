@@ -697,11 +697,13 @@
                 onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/midRound`), (snapshot) => {
                     const val = snapshot.val();
                     if (val !== null && roundInput) {
-                        // ユーザー入力由来か判定するためのフラグ付きでイベント発火
-                        roundInput.value = val;
-                        const event = new Event('input', { bubbles: true });
-                        event.isSyncEvent = true;
-                        roundInput.dispatchEvent(event);
+                        const numVal = parseInt(val) || 1;
+                        if (parseInt(roundInput.value) !== numVal) {
+                            roundInput.value = numVal;
+                            const event = new Event('input', { bubbles: true });
+                            event.isSyncEvent = true;
+                            roundInput.dispatchEvent(event);
+                        }
                     }
                 });
 
@@ -709,11 +711,13 @@
                 onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/endRound`), (snapshot) => {
                     const val = snapshot.val();
                     if (val !== null && roundInput) {
-                        // ユーザー入力由来か判定するためのフラグ付きでイベント発火
-                        roundInput.value = val;
-                        const event = new Event('input', { bubbles: true });
-                        event.isSyncEvent = true;
-                        roundInput.dispatchEvent(event);
+                        const numVal = parseInt(val) || 1;
+                        if (parseInt(roundInput.value) !== numVal) {
+                            roundInput.value = numVal;
+                            const event = new Event('input', { bubbles: true });
+                            event.isSyncEvent = true;
+                            roundInput.dispatchEvent(event);
+                        }
                     }
                 });
             }
