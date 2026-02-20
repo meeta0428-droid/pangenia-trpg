@@ -729,6 +729,7 @@ function collectData() {
         currentHp: document.getElementById('val-current-hp').value,
         teamPool: document.getElementById('team-pool-value').value,
         rfRank: document.getElementById('rf-rank-value').value,
+        roundCount: document.getElementById('round-count-value') ? document.getElementById('round-count-value').value : 1,
         roletags: Array.from(document.querySelectorAll('.roletag-input')).map(input => input.value),
         beast: {
             name: document.getElementById('beast-name').value,
@@ -907,6 +908,12 @@ function applyData(data) {
         updateRfRankDisplay();
     }
 
+    // 13. Round Count
+    if (data.roundCount !== undefined) {
+        const roundCountInput = document.getElementById('round-count-value');
+        if (roundCountInput) roundCountInput.value = data.roundCount;
+    }
+
     updateUI();
 }
 
@@ -966,6 +973,31 @@ window.addEventListener('firebase-ready', () => {
             } else if (val === null) {
                 // データ未設定時は0を表示
                 input.value = 0;
+            }
+        }, (error) => {
+            console.error(error);
+        });
+    }
+
+    // 5. Round Count Sync (UI -> Firebase & Firebase -> UI)
+    const roundCountRef = ref(db, `rooms/${roomId}/roundCount`);
+    const roundCountInput = document.getElementById('round-count-value');
+
+    if (roundCountInput) {
+        // UI -> Firebase
+        roundCountInput.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value) || 1;
+            set(roundCountRef, val).catch(err => console.error(err));
+        });
+
+        // Firebase -> UI
+        onValue(roundCountRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val !== null && parseInt(roundCountInput.value) !== val) {
+                roundCountInput.value = val;
+            } else if (val === null) {
+                // 初期値
+                roundCountInput.value = 1;
             }
         }, (error) => {
             console.error(error);

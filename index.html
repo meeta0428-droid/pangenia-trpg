@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パンゲニア・リビルド キャラクターシート</title>
-    <link rel="stylesheet" href="style.css?v=20260220-arts1">
+    <link rel="stylesheet" href="style.css?v=20260220-round1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -309,6 +309,13 @@
                     </div>
                     <div id="rf-rank-display"
                         style="margin-top: 8px; font-size: 2rem; font-weight: bold; color: #8e44ad;">ランク 0</div>
+                </div>
+                <div style="text-align: center;">
+                    <h2 style="margin-top: 0;">ラウンド数</h2>
+                    <div class="input-group">
+                        <input type="number" id="round-count-value" value="1" min="1" placeholder="1"
+                            style="width: 80px; font-size: 1.5rem; font-weight: bold; text-align: center; border: 2px solid var(--primary-color); border-radius: 8px; padding: 10px;">
+                    </div>
                 </div>
             </div>
         </section>
@@ -660,7 +667,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-arts1"></script>
+        <script src="script.js?v=20260220-round1"></script>
 </body>
 
 </html>
