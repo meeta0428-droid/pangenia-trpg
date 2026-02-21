@@ -1055,6 +1055,16 @@ body.pdf-exporting .container {
     transform: none !important;
 }
 
+body.pdf-exporting .container * {
+    float: none !important;
+    position: static !important;
+}
+
+body.pdf-exporting section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
 /* 使役獣 折り畳みスタイル */
 .servant-beast-details {
     margin-bottom: 20px;

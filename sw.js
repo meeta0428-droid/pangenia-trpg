@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260221-pdf_order';
+const CACHE_NAME = 'pangaea-rebuild-v20260221-pdf_order2';
 const ASSETS = [
     './',
     './index.html',

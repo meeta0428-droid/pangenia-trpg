@@ -1737,7 +1737,13 @@ function initPdfExport() {
             margin: [5, 5, 5, 5],
             filename: `${charName}_Sheet.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                scrollY: 0, // スクロールバグ対策
+                windowWidth: document.documentElement.offsetWidth // レイアウト崩れ対策
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak: { mode: 'css', before: '#nextpage1' } // adjust if needed, mostly default is fine 
         };
@@ -1752,6 +1758,9 @@ function initPdfExport() {
         btnPdf.innerHTML = '生成中...';
         btnPdf.style.background = '#95a5a6';
         btnPdf.disabled = true;
+
+        // html2canvas のスクロール位置バグ(表示順序逆転や見切れ)を防ぐために一番上までスクロールする
+        window.scrollTo(0, 0);
 
         // 一時的にbodyのflexレイアウトを解除して表示順序の逆転を防ぐ
         document.body.classList.add('pdf-exporting');
