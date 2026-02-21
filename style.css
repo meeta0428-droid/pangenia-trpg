@@ -580,6 +580,7 @@ button:active {
 
 .summary-section {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
     margin-top: 30px;
     background: white;
