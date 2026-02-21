@@ -1103,13 +1103,20 @@ window.addEventListener('firebase-ready', () => {
     const input = document.getElementById('team-pool-value');
 
     // 3. UI -> Firebase
+    let previousTeamPool = parseInt(input?.value) || 0;
+
     if (input) {
         input.addEventListener('input', (e) => {
             const val = parseInt(e.target.value) || 0;
+            const delta = val - previousTeamPool;
+            previousTeamPool = val;
+
             set(teamPoolRef, val).catch(err => console.error(err));
-            // RFランクも連動更新（上昇時のみ）
-            if (rfRankInput && val > (parseInt(rfRankInput.value) || 0)) {
-                rfRankInput.value = val;
+
+            // 自分があげた分(delta > 0)だけを獲得RFに加算する
+            if (rfRankInput && delta > 0) {
+                const currentRf = parseInt(rfRankInput.value) || 0;
+                rfRankInput.value = currentRf + delta;
                 updateRfRankDisplay();
             }
         });
@@ -1119,9 +1126,11 @@ window.addEventListener('firebase-ready', () => {
             const val = snapshot.val();
             if (val !== null && parseInt(input.value) !== val) {
                 input.value = val;
+                previousTeamPool = val; // 他人が変更した場合も追従
             } else if (val === null) {
                 // データ未設定時は0を表示
                 input.value = 0;
+                previousTeamPool = 0;
             }
         }, (error) => {
             console.error(error);
