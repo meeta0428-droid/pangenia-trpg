@@ -1753,11 +1753,16 @@ function initPdfExport() {
         btnPdf.style.background = '#95a5a6';
         btnPdf.disabled = true;
 
+        // 一時的にbodyのflexレイアウトを解除して表示順序の逆転を防ぐ
+        document.body.classList.add('pdf-exporting');
+
         html2pdf().set(opt).from(element).save().then(() => {
             // Restore hidden elements
             noPrintElements.forEach(el => el.style.display = '');
             // Restore details state
             closedDetails.forEach(details => details.removeAttribute('open'));
+            // Remove export class
+            document.body.classList.remove('pdf-exporting');
 
             // Restore button
             btnPdf.innerHTML = originalText;
@@ -1768,6 +1773,8 @@ function initPdfExport() {
             // Restore hidden elements
             noPrintElements.forEach(el => el.style.display = '');
             closedDetails.forEach(details => details.removeAttribute('open'));
+            document.body.classList.remove('pdf-exporting');
+
             btnPdf.innerHTML = originalText;
             btnPdf.style.background = '#e67e22';
             btnPdf.disabled = false;

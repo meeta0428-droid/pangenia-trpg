@@ -935,18 +935,23 @@ button:active {
 
     /* 基本レイアウト */
     body {
+        display: block !important;
         background: white !important;
         color: black !important;
         font-size: 10pt;
         margin: 0;
         padding: 0;
+        height: auto !important;
+        min-height: auto !important;
     }
 
     .container {
+        display: block !important;
         max-width: 100% !important;
         margin: 0 !important;
         padding: 10px !important;
         box-shadow: none !important;
+        transform: none !important;
     }
 
     header {
@@ -1028,6 +1033,26 @@ button:active {
     .servant-beast-details>.servant-beast-section {
         display: block !important;
     }
+}
+
+/* PDF生成中のみ強制的に適用する一時クラス */
+body.pdf-exporting {
+    display: block !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+}
+
+body.pdf-exporting .container {
+    display: block !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 /* 使役獣 折り畳みスタイル */
