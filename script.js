@@ -1697,6 +1697,76 @@ function initDiceRoller() {
     }
 }
 
+// PDF Export Logic using html2pdf.js
+function initPdfExport() {
+    const btnPdf = document.getElementById('btn-download-pdf');
+    if (!btnPdf) return;
+
+    btnPdf.addEventListener('click', () => {
+        // Find the main container
+        const element = document.getElementById('character-sheet-container') || document.querySelector('.container');
+        if (!element) return;
+
+        // Hide elements not intended for print
+        const noPrintElements = document.querySelectorAll('.no-print');
+        noPrintElements.forEach(el => el.style.display = 'none');
+
+        // Expand servant beast if collapsed
+        const servantBeastDetails = document.querySelectorAll('.servant-beast-details');
+        const closedDetails = [];
+        servantBeastDetails.forEach(details => {
+            if (!details.hasAttribute('open')) {
+                details.setAttribute('open', '');
+                closedDetails.push(details);
+            }
+        });
+
+        const charName = document.getElementById('char-name')?.value || 'Character';
+
+        // Options for html2pdf
+        const opt = {
+            margin: [5, 5, 5, 5],
+            filename: `${charName}_Sheet.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: 'css', before: '#nextpage1' } // adjust if needed, mostly default is fine 
+        };
+
+        // If you want to force 1 page continuous, you can adjust the jsPDF format
+        // based on the calculated element height, but default A4 paginated is usually safer and cleaner 
+        // with css page-breaks we added earlier in style.css. Let's try standard multi-page A4 first.
+        // It's still a single file download.
+
+        // Show loading state
+        const originalText = btnPdf.innerHTML;
+        btnPdf.innerHTML = '生成中...';
+        btnPdf.style.background = '#95a5a6';
+        btnPdf.disabled = true;
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Restore hidden elements
+            noPrintElements.forEach(el => el.style.display = '');
+            // Restore details state
+            closedDetails.forEach(details => details.removeAttribute('open'));
+
+            // Restore button
+            btnPdf.innerHTML = originalText;
+            btnPdf.style.background = '#e67e22';
+            btnPdf.disabled = false;
+        }).catch(err => {
+            console.error("PDF Export failed", err);
+            // Restore hidden elements
+            noPrintElements.forEach(el => el.style.display = '');
+            closedDetails.forEach(details => details.removeAttribute('open'));
+            btnPdf.innerHTML = originalText;
+            btnPdf.style.background = '#e67e22';
+            btnPdf.disabled = false;
+            alert("PDFの生成に失敗しました。もう一度お試しください。");
+        });
+    });
+}
+
 // Global Initialization Logic
 function runAllInit() {
     console.log("Starting initialization...");
@@ -1715,6 +1785,7 @@ function runAllInit() {
     safeInit(initEquipmentListeners, "EquipmentListeners");
     safeInit(initSaveSystem, "SaveSystem");
     safeInit(initPlayHistoryListeners, "PlayHistoryListeners");
+    safeInit(initPdfExport, "PdfExport");
     safeInit(updateUI, "UpdateUI");
     safeInit(initDiceRoller, "DiceRoller");
 

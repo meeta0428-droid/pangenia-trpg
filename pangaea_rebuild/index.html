@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パンゲニア・リビルド キャラクターシート</title>
-    <link rel="stylesheet" href="style.css?v=20260220-mobile">
+    <link rel="stylesheet" href="style.css?v=20260221-teampool_bg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -604,7 +604,9 @@
                 <button id="btn-share" class="save-load-btn"
                     style="width: 60px; height: 60px; border-radius: 50%; background: #27ae60; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(39,174,96,0.4);">共有</button>
                 <button id="btn-print" class="save-load-btn no-print" onclick="window.print();"
-                    style="width: 60px; height: 60px; border-radius: 50%; background: #3498db; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(52,152,219,0.4);">PDF</button>
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #3498db; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(52,152,219,0.4);">印刷</button>
+                <button id="btn-download-pdf" class="save-load-btn no-print"
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #e67e22; color: white; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 2px 8px rgba(230,126,34,0.4); flex-direction: column; line-height: 1.2;">1枚<br>PDF</button>
             </div>
         </section>
 
@@ -705,7 +707,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-ec_calc"></script>
+        <script src="script.js?v=20260220-pdf_export"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -725,40 +727,49 @@
             const gmDb = getDatabase(gmApp);
 
             // 現在のURLパラメータからルームIDを取得
-            let gmRoomId = new URLSearchParams(window.location.search).get('room');
+            // 現在のURLパラメータからルームIDを取得して設定する関数
+            function setupGMSync() {
+                let gmRoomId = new URLSearchParams(window.location.search).get('room');
 
-            // ルームIDが存在する場合のみ同期を実行
-            if (gmRoomId) {
-                const roundInput = document.getElementById('round-count-value');
+                if (gmRoomId) {
+                    console.log("[GMSync] Room ID detected, starting sync for room: " + gmRoomId);
+                    const roundInput = document.getElementById('round-count-value');
 
-                // 中盤ラウンドの監視
-                onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/midRound`), (snapshot) => {
-                    const val = snapshot.val();
-                    if (val !== null && roundInput) {
-                        const numVal = parseInt(val) || 1;
-                        if (parseInt(roundInput.value) !== numVal) {
-                            roundInput.value = numVal;
-                            const event = new Event('input', { bubbles: true });
-                            event.isSyncEvent = true;
-                            roundInput.dispatchEvent(event);
+                    // 中盤ラウンドの監視
+                    onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/midRound`), (snapshot) => {
+                        const val = snapshot.val();
+                        if (val !== null && roundInput) {
+                            const numVal = parseInt(val) || 1;
+                            if (parseInt(roundInput.value) !== numVal) {
+                                roundInput.value = numVal;
+                                const event = new Event('input', { bubbles: true });
+                                event.isSyncEvent = true;
+                                roundInput.dispatchEvent(event);
+                            }
                         }
-                    }
-                });
+                    });
 
-                // 終盤ラウンドの監視
-                onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/endRound`), (snapshot) => {
-                    const val = snapshot.val();
-                    if (val !== null && roundInput) {
-                        const numVal = parseInt(val) || 1;
-                        if (parseInt(roundInput.value) !== numVal) {
-                            roundInput.value = numVal;
-                            const event = new Event('input', { bubbles: true });
-                            event.isSyncEvent = true;
-                            roundInput.dispatchEvent(event);
+                    // 終盤ラウンドの監視
+                    onValue(ref(gmDb, `rooms/${gmRoomId}/gameData/endRound`), (snapshot) => {
+                        const val = snapshot.val();
+                        if (val !== null && roundInput) {
+                            const numVal = parseInt(val) || 1;
+                            if (parseInt(roundInput.value) !== numVal) {
+                                roundInput.value = numVal;
+                                const event = new Event('input', { bubbles: true });
+                                event.isSyncEvent = true;
+                                roundInput.dispatchEvent(event);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    // ルームIDがまだ生成されていない場合は少し待ってから再試行
+                    setTimeout(setupGMSync, 500);
+                }
             }
+
+            // 初期化実行
+            setupGMSync();
         </script>
 </body>
 
