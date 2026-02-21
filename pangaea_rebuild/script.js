@@ -1168,6 +1168,48 @@ window.addEventListener('firebase-ready', () => {
         });
     }
 
+    // --- Room ID Copy & Join Logic ---
+    const btnCopyRoomId = document.getElementById('btn-copy-roomid');
+    const inputJoinRoom = document.getElementById('join-room-input');
+    const btnJoinRoom = document.getElementById('btn-join-room');
+
+    if (btnCopyRoomId) {
+        btnCopyRoomId.addEventListener('click', () => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(roomId).then(() => {
+                    const originalHTML = btnCopyRoomId.innerHTML;
+                    btnCopyRoomId.innerHTML = 'コピー<br>完了!';
+                    btnCopyRoomId.style.background = '#2ecc71';
+                    setTimeout(() => {
+                        btnCopyRoomId.innerHTML = originalHTML;
+                        btnCopyRoomId.style.background = '#8e44ad';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy Room ID:', err);
+                    alert(`ルームIDのコピーに失敗しました。手動でコピーしてください: ${roomId}`);
+                });
+            } else {
+                prompt("以下のルームIDをコピーしてください:", roomId);
+            }
+        });
+    }
+
+    if (btnJoinRoom && inputJoinRoom) {
+        btnJoinRoom.addEventListener('click', () => {
+            const targetRoom = inputJoinRoom.value.trim();
+            if (targetRoom) {
+                // Confirm before navigating away, as unsaved local changes might be lost
+                if (confirm(`ルームID「${targetRoom}」に合流しますか？\n（※ローカルで保存していない変更は破棄されます）`)) {
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.set('room', targetRoom);
+                    window.location.href = newUrl.toString();
+                }
+            } else {
+                alert('ルームIDを入力してください。');
+            }
+        });
+    }
+
     // --- QR Code & Modal Logic ---
     const modal = document.getElementById('qr-modal');
     // ... (rest of logic)
