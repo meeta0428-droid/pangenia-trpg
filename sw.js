@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260221-rf_logic2';
+const CACHE_NAME = 'pangaea-rebuild-v20260221-html2pdf_fix';
 const ASSETS = [
     './',
     './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
     './script.js',
     './icon.svg',
     './manifest.json',
+    './html2pdf.bundle.min.js',
     './dice_roller/index.html',
     './dice_roller/style.css',
     './dice_roller/script.js'
