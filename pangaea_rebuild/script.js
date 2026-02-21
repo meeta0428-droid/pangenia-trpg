@@ -820,7 +820,8 @@ function collectData() {
             past: document.querySelectorAll('.background-section textarea')[0].value,
             reason: document.querySelectorAll('.background-section textarea')[1].value,
             social: document.querySelectorAll('.background-section textarea')[2].value,
-            future: document.querySelectorAll('.background-section textarea')[3].value
+            future: document.querySelectorAll('.background-section textarea')[3].value,
+            memo: document.querySelectorAll('.background-section textarea')[4] ? document.querySelectorAll('.background-section textarea')[4].value : ''
         },
         hpOtherMod: document.getElementById('hp-other-mod').value,
         currentHp: document.getElementById('val-current-hp').value,
@@ -959,10 +960,11 @@ function applyData(data) {
     // 8. Background
     if (data.background) {
         const textareas = document.querySelectorAll('.background-section textarea');
-        textareas[0].value = data.background.past || '';
-        textareas[1].value = data.background.reason || '';
-        textareas[2].value = data.background.social || '';
-        textareas[3].value = data.background.future || '';
+        if (textareas[0]) textareas[0].value = data.background.past || '';
+        if (textareas[1]) textareas[1].value = data.background.reason || '';
+        if (textareas[2]) textareas[2].value = data.background.social || '';
+        if (textareas[3]) textareas[3].value = data.background.future || '';
+        if (textareas[4]) textareas[4].value = data.background.memo || '';
     }
 
     // 8.5. Role Tags
