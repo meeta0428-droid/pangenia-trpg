@@ -815,6 +815,7 @@ function collectData() {
             effect: row.querySelector('.arts-effect')?.value || '',
             rf: row.querySelector('.arts-rf')?.value || ''
         })),
+        packNames: Array.from(document.querySelectorAll('.pack-name')).map(input => input.value),
         background: {
             past: document.querySelectorAll('.background-section textarea')[0].value,
             reason: document.querySelectorAll('.background-section textarea')[1].value,
@@ -944,6 +945,14 @@ function applyData(data) {
                     if (nameInput) nameInput.value = art;
                 }
             }
+        });
+    }
+
+    // 7.5. Arts Pack Names
+    if (data.packNames) {
+        const packInputs = document.querySelectorAll('.pack-name');
+        data.packNames.forEach((name, idx) => {
+            if (packInputs[idx]) packInputs[idx].value = name;
         });
     }
 

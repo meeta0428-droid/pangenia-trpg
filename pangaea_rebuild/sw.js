@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260221-roomid_ui3';
+const CACHE_NAME = 'pangaea-rebuild-v20260221-artspackname';
 const ASSETS = [
     './',
     './index.html',

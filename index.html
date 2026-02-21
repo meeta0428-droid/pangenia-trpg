@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パンゲニア・リビルド キャラクターシート</title>
-    <link rel="stylesheet" href="style.css?v=20260221-roomid_ui3">
+    <link rel="stylesheet" href="style.css?v=20260221-artspackname">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -495,7 +495,11 @@
             <h2>アーツパック (Arts Pack)</h2>
             <div class="pack-container">
                 <div class="pack-group" data-pack-cost="10">
-                    <h3>第1パック (10 EC / 1項目)</h3>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <h3 style="margin: 0; min-width: 140px;">第1パック (10 EC / 1項目)</h3>
+                        <input type="text" class="pack-name" placeholder="パック名を入力"
+                            style="flex: 1; padding: 4px 8px; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; font-weight: normal;">
+                    </div>
                     <div class="arts-row">
                         <input type="text" class="arts-name" placeholder="アーツ名" data-cost="10">
                         <input type="text" class="arts-effect" placeholder="効果">
@@ -516,7 +520,11 @@
                     </div>
                 </div>
                 <div class="pack-group" data-pack-cost="15">
-                    <h3>第2パック (15 EC / 1項目)</h3>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <h3 style="margin: 0; min-width: 140px;">第2パック (15 EC / 1項目)</h3>
+                        <input type="text" class="pack-name" placeholder="パック名を入力"
+                            style="flex: 1; padding: 4px 8px; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; font-weight: normal;">
+                    </div>
                     <div class="arts-row">
                         <input type="text" class="arts-name" placeholder="アーツ名" data-cost="15">
                         <input type="text" class="arts-effect" placeholder="効果">
@@ -537,7 +545,11 @@
                     </div>
                 </div>
                 <div class="pack-group" data-pack-cost="20">
-                    <h3>第3パック (20 EC / 1項目)</h3>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <h3 style="margin: 0; min-width: 140px;">第3パック (20 EC / 1項目)</h3>
+                        <input type="text" class="pack-name" placeholder="パック名を入力"
+                            style="flex: 1; padding: 4px 8px; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; font-weight: normal;">
+                    </div>
                     <div class="arts-row">
                         <input type="text" class="arts-name" placeholder="アーツ名" data-cost="20">
                         <input type="text" class="arts-effect" placeholder="効果">
@@ -720,7 +732,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260221-roomid_ui3"></script>
+        <script src="script.js?v=20260221-artspackname"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
