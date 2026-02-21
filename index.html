@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パンゲニア・リビルド キャラクターシート</title>
-    <link rel="stylesheet" href="style.css?v=20260221-settingmemo">
+    <link rel="stylesheet" href="style.css?v=20260221-collapsibles">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -445,49 +445,109 @@
 
         <section class="items-section">
             <h2>道具 (Items)</h2>
-            <div class="item-header">
-                <span class="header-name">名称</span>
-                <span class="header-effect">効果</span>
-                <span class="header-count">回数</span>
-                <span class="header-cost">消費EC</span>
-            </div>
             <!-- 6 Rows -->
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
-            <div class="item-row">
-                <input type="text" class="item-name" placeholder="名称">
-                <input type="text" class="item-effect" placeholder="効果">
-                <input type="number" class="item-count" placeholder="回数" value="0" min="0">
-                <input type="number" class="item-cost" placeholder="EC" value="0" min="0">
-            </div>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
+            <details class="item-details item-row" open>
+                <summary class="item-summary">
+                    <input type="text" class="item-name" placeholder="名称" onclick="event.preventDefault();">
+                </summary>
+                <div class="item-body">
+                    <div class="item-body-row">
+                        <span class="item-body-label">効果</span>
+                        <input type="text" class="item-effect" placeholder="効果">
+                    </div>
+                    <div class="item-body-row">
+                        <span class="item-body-label">回数</span>
+                        <input type="number" class="item-count" placeholder="0" value="0" min="0">
+                        <span class="item-body-label">消費EC</span>
+                        <input type="number" class="item-cost" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+            </details>
 
         </section>
 
@@ -584,29 +644,31 @@
             </div>
         </section>
 
-        <section class="background-section">
-            <h2>背景 (Background)</h2>
-            <div class="input-group">
-                <label>過去</label>
-                <textarea rows="3"></textarea>
-            </div>
-            <div class="input-group">
-                <label>討伐者になった理由</label>
-                <textarea rows="3"></textarea>
-            </div>
-            <div class="input-group">
-                <label>仲間に対して</label>
-                <textarea rows="3"></textarea>
-            </div>
-            <div class="input-group">
-                <label>未来の目的</label>
-                <textarea rows="3"></textarea>
-            </div>
-            <div class="input-group">
-                <label>設定メモ</label>
-                <textarea rows="5" placeholder="キャラクターの細かい設定やフリーメモなどを自由に入力できます"></textarea>
-            </div>
-        </section>
+        <details class="servant-beast-details background-details" open>
+            <summary class="servant-beast-summary">背景 (Background)</summary>
+            <section class="background-section glass-panel" style="margin-bottom: 0;">
+                <div class="input-group">
+                    <label>過去</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>討伐者になった理由</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>仲間に対して</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>未来の目的</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>設定メモ</label>
+                    <textarea rows="5" placeholder="キャラクターの細かい設定やフリーメモなどを自由に入力できます"></textarea>
+                </div>
+            </section>
+        </details>
 
         <section class="summary-section">
             <div class="summary-card">
@@ -736,7 +798,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260221-settingmemo"></script>
+        <script src="script.js?v=20260221-collapsibles"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
