@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pangaea-rebuild-v20260221-teampool_bg';
+const CACHE_NAME = 'pangaea-rebuild-v20260221-rf_rename';
 const ASSETS = [
     './',
     './index.html',

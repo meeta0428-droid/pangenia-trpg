@@ -141,7 +141,7 @@ function getStatValue(statKey) {
 
 /**
  * RFランク表示を更新する
- * 1→ランク1, 4→ランク2, 10→ランク3
+ * 1→RFランク1, 4→RFランク2, 10→RFランク3
  */
 /**
  * 現在のRFランクを取得する
@@ -162,7 +162,7 @@ function updateRfRankDisplay() {
 
     const rank = getRfRank();
 
-    display.textContent = rank > 0 ? `ランク ${rank}` : '—';
+    display.textContent = rank > 0 ? `RFランク ${rank}` : '—';
     // ランクに応じた色分け
     const colors = ['#999', '#27ae60', '#e67e22', '#e74c3c'];
     display.style.color = colors[rank] || '#999';

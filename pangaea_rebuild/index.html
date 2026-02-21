@@ -302,13 +302,13 @@
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <h2 style="margin-top: 0;">RFランク</h2>
+                    <h2 style="margin-top: 0;">獲得RF</h2>
                     <div class="input-group">
                         <input type="number" id="rf-rank-value" value="0" min="0" placeholder="0"
                             style="width: 80px; font-size: 1.5rem; font-weight: bold; text-align: center; border: 2px solid var(--primary-color); border-radius: 8px; padding: 10px;">
                     </div>
                     <div id="rf-rank-display"
-                        style="margin-top: 8px; font-size: 2rem; font-weight: bold; color: #8e44ad;">ランク 0</div>
+                        style="margin-top: 8px; font-size: 2rem; font-weight: bold; color: #8e44ad;">RFランク 0</div>
                 </div>
                 <div style="text-align: center;">
                     <h2 style="margin-top: 0;">ラウンド数</h2>
@@ -707,7 +707,7 @@
             // Dispatch event to signal Firebase is ready
             window.dispatchEvent(new Event('firebase-ready'));
         </script>
-        <script src="script.js?v=20260220-pdf_export"></script>
+        <script src="script.js?v=20260221-rf_rename"></script>
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
             import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
